@@ -1,0 +1,27 @@
+{
+    "name": "lezhnev74/pasvl",
+    "description": "PHP Array Structure Validation library",
+    "authors": [
+        {
+            "name": "Dmitriy Lezhnev",
+            "email": "lezhnev.work@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "PASVL\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "APIDev\\Tests\\": "tests/"
+        }
+    }
+}
