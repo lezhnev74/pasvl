@@ -1,4 +1,4 @@
-[![Packagist](https://img.shields.io/packagist/dt/lezhnev74/pasvl.svg)]()
+[![Packagist](https://img.shields.io/packagist/dt/lezhnev74/pasvl.svg)](https://packagist.org/packages/lezhnev74/pasvl)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/lezhnev74/pasvl/master/LICENSE)
 [![Build Status](https://travis-ci.org/lezhnev74/pasvl.svg?branch=master)](https://travis-ci.org/lezhnev74/pasvl)
 # PASVL - PHP Array Structure Validation Library 

@@ -1,6 +1,12 @@
 {
     "name": "lezhnev74/pasvl",
     "description": "PHP Array Structure Validation library",
+    "keywords": [
+        "validation",
+        "array",
+        "structure",
+        "pattern"
+    ],
     "authors": [
         {
             "name": "Dmitriy Lezhnev",
