@@ -1,0 +1,4 @@
+language: php
+rvm:
+ - 7.1
+ - 7.2

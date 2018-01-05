@@ -1,3 +1,6 @@
+[![Packagist](https://img.shields.io/packagist/dt/lezhnev74/pasvl.svg)]()
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/lezhnev74/pasvl/master/LICENSE)
+[![Build Status](https://travis-ci.org/lezhnev74/pasvl.svg?branch=master)](https://travis-ci.org/lezhnev74/pasvl)
 # PASVL - PHP Array Structure Validation Library 
 
 The purpose of this library is to validate an existing (nested) array against a template and report a mismatch. 
