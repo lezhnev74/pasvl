@@ -11,9 +11,7 @@ class IntValidator extends Validator
 {
     public function __invoke($data)
     {
-        if (!is_integer($data)) {
-            throw new InvalidData("Value is not an integer");
-        }
+        return is_integer($data);
     }
 
 }

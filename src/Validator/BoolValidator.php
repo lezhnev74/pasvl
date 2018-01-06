@@ -11,9 +11,7 @@ class BoolValidator extends Validator
 {
     public function __invoke($data)
     {
-        if (!is_bool($data)) {
-            throw new InvalidData("Value is not a boolean");
-        }
+        return is_bool($data);
     }
 
 }

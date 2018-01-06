@@ -11,9 +11,7 @@ class ArrayValidator extends Validator
 {
     public function __invoke($data)
     {
-        if (!is_iterable($data)) {
-            throw new InvalidData("Value is not an array/iterable");
-        }
+        return is_iterable($data);
     }
 
 }

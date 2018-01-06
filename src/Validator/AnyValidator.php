@@ -9,9 +9,9 @@ namespace PASVL\Validator;
 
 class AnyValidator extends Validator
 {
-    public function __invoke($data)
+    public function __invoke($data): bool
     {
-        // matches any data
+        return true;
     }
 
 }

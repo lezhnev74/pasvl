@@ -8,7 +8,6 @@ namespace PASVL\Traverser;
 
 
 use PASVL\Pattern\Pattern;
-use PASVL\Validator\InvalidData;
 use PASVL\ValidatorLocator\ValidatorLocator;
 
 class TraversingMatcher
@@ -169,24 +168,25 @@ class TraversingMatcher
                 ->validatorLocator
                 ->getValidatorClass($this->patterns[$pattern]->getMainValidator()->getName());
 
-            try {
-                call_user_func_array(
-                    $mainValidator,
-                    array_merge([$data], $this->patterns[$pattern]->getMainValidator()->getArguments())
-                );
 
-                foreach ($this->patterns[$pattern]->getSubValidators() as $subValidator) {
-                    call_user_func_array(
+            $matched = call_user_func_array(
+                $mainValidator,
+                array_merge([$data], $this->patterns[$pattern]->getMainValidator()->getArguments())
+            );
+
+            foreach ($this->patterns[$pattern]->getSubValidators() as $subValidator) {
+                $matched = $matched && call_user_func_array(
                         [$mainValidator, $subValidator->getName()],
                         array_merge([$data], $subValidator->getArguments())
                     );
+
+                if (!$matched) {
+                    break;
                 }
+            }
 
+            if ($matched) {
                 $matchedPatterns[$pattern_key] = $pattern;
-
-            } catch (InvalidData $e) {
-                // data did not match current pattern
-                // continue to the next one
             }
         }
 

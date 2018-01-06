@@ -11,10 +11,7 @@ class KeyValidator extends Validator
 {
     public function __invoke($data, $exact_value)
     {
-
-        if ($data !== $exact_value) {
-            throw new InvalidData("Value does not match");
-        }
+        return $data === $exact_value;
     }
 
 }

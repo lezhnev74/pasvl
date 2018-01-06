@@ -12,32 +12,54 @@ Highly inspired by abandoned package [ptrofimov/matchmaker](https://github.com/p
 ## Example: Valid array
 
 ```php
-$pattern = [
-    'name' => ':string :len(3)',
-    'age' => ':int'
-];
+$data = [
+               [
+                   'type' => 'book',
+                   'title' => 'Geography book',
+                   'chapters' => [
+                       'eu' => ['title' => 'Europe', 'interesting' => true],
+                       'as' => ['title' => 'America', 'interesting' => false],
+                   ],
+               ],
+               [
+                   'type' => 'book',
+                   'title' => 'Foreign languages book',
+                   'chapters' => [
+                       'de' => ['title' => 'Deutsch'],
+                   ],
+               ],
+           ];
 
-$array = [
-    "name" => "Joe",
-    "age" => "20"
-];
+$pattern = [
+            '*' => [
+                'type' => 'book',
+                'title' => ':string :contains(book)',
+                'chapters' => [
+                    ':string :length(2) {1,3}' => [
+                        'title' => ':string',
+                        'interesting?' => ':bool',
+                    ],
+                ],
+            ],
+        ];
 
 $traverser = new TraversingMatcher(new ValidatorLocator());
-$traverser->match($pattern, $array); // returns void, throws Report on Fail
+$traverser->match($pattern, $data); // returns void, throws Report on Fail
 ```
 
 ## Example: Invalid array
 
 ```php
+$data = [
+    "password"=>"weak"
+];
+
 $pattern = [
     '*' => [
         "password" => ":string :min(6)"
     ],
 ];
 
-$data = [
-    "password"=>"weak"
-];
 
 $traverser = new TraversingMatcher(new ValidatorLocator());
 try {

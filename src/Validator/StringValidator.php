@@ -9,70 +9,54 @@ namespace PASVL\Validator;
 
 class StringValidator extends Validator
 {
-    public function __invoke($data)
+    public function __invoke($data): bool
     {
-        if (!is_string($data)) {
-            throw new InvalidData("Value is not a string");
-        }
+        return is_string($data);
     }
 
-    public function len($data, int $length)
+    public function len($data, int $length): bool
     {
-        if (mb_strlen($data, 'utf-8') != $length) {
-            throw new InvalidData("Value has different length");
-        }
+        return mb_strlen($data, 'utf-8') == $length;
     }
 
-    public function length($data, int $length)
+    public function length($data, int $length): bool
     {
-        $this->len($data, $length);
+        return $this->len($data, $length);
     }
 
-    public function min($data, int $length)
+    public function min($data, int $length): bool
     {
-        if (mb_strlen($data) < $length) {
-            throw new InvalidData("Value is too small");
-        }
+        return mb_strlen($data) >= $length;
     }
 
-    public function max($data, int $length)
+    public function max($data, int $length): bool
     {
-        if (mb_strlen($data) > $length) {
-            throw new InvalidData("Value is too long");
-        }
+        return mb_strlen($data) <= $length;
     }
 
-    public function contains($data, string $needle)
+    public function contains($data, string $needle): bool
     {
-        if (mb_strpos($data, $needle) === false) {
-            throw new InvalidData("String does not contain a needle");
-        }
+        return mb_strpos($data, $needle) !== false;
     }
 
-    public function regexp($data, string $pattern)
+    public function regexp($data, string $pattern): bool
     {
-        if (!preg_match($pattern, $data)) {
-            throw new InvalidData("String does not match regular expression pattern");
-        }
+        return preg_match($pattern, $data);
     }
 
-    public function regex($data, string $pattern)
+    public function regex($data, string $pattern): bool
     {
-        $this->regexp($data, $pattern);
+        return $this->regexp($data, $pattern);
     }
 
-    public function starts($data, string $starts)
+    public function starts($data, string $starts): bool
     {
-        if (mb_strpos($data, $starts) !== 0) {
-            throw new InvalidData("String does not start with a given value");
-        }
+        return mb_strpos($data, $starts) === 0;
     }
 
-    public function ends($data, string $ends)
+    public function ends($data, string $ends): bool
     {
-        if (mb_strrpos($data, $ends) !== (strlen($data) - strlen($ends))) {
-            throw new InvalidData("String does not end with a given value");
-        }
+        return mb_strrpos($data, $ends) === (strlen($data) - strlen($ends));
     }
 
 
