@@ -11,9 +11,25 @@ use PHPUnit\Framework\TestCase;
 
 class TraversingMatcherTest extends TestCase
 {
-   function dataProviderValid()
+    function dataProviderValid()
     {
         return [
+            [
+                [
+                    "array" => ["a" => 1, "c" => 2, "b" => 3],
+                ],
+                [
+                    "array" => ":array :keys(b,a,c)",
+                ],
+            ],
+            [
+                [
+                    "result" => "passed",
+                ],
+                [
+                    "result" => ":string :in(passed,failed)",
+                ],
+            ],
             [
                 [
                     "name" => "John",

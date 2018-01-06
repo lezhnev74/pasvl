@@ -7,11 +7,10 @@
 namespace PASVL\Validator;
 
 
-class BoolValidator extends Validator
+class FloatValidator extends NumberValidator
 {
     public function __invoke($data): bool
     {
-        return is_bool($data);
+        return is_float($data);
     }
-
 }

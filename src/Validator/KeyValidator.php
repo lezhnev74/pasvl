@@ -9,7 +9,7 @@ namespace PASVL\Validator;
 
 class KeyValidator extends Validator
 {
-    public function __invoke($data, $exact_value)
+    public function __invoke($data, $exact_value): bool
     {
         return $data === $exact_value;
     }

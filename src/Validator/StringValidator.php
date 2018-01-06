@@ -59,5 +59,33 @@ class StringValidator extends Validator
         return mb_strrpos($data, $ends) === (strlen($data) - strlen($ends));
     }
 
+    public function in($data, ...$options): bool
+    {
+        return in_array($data, $options);
+    }
 
+    public function url($data): bool
+    {
+        return filter_var($data, FILTER_VALIDATE_URL);
+    }
+
+    public function ip($data): bool
+    {
+        return filter_var($data, FILTER_VALIDATE_IP);
+    }
+
+    public function email($data): bool
+    {
+        return filter_var($data, FILTER_VALIDATE_EMAIL);
+    }
+
+    public function json($data): bool
+    {
+        return @json_decode($data) !== null;
+    }
+
+    public function date($data): bool
+    {
+        return strtotime($data) !== false;
+    }
 }

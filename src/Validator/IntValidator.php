@@ -7,11 +7,10 @@
 namespace PASVL\Validator;
 
 
-class IntValidator extends Validator
+class IntValidator extends NumberValidator
 {
-    public function __invoke($data)
+    public function __invoke($data): bool
     {
         return is_integer($data);
     }
-
 }
