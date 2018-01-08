@@ -9,6 +9,11 @@ It has object-oriented extendable architecture to write and add custom validator
 
 Highly inspired by abandoned package [ptrofimov/matchmaker](https://github.com/ptrofimov/matchmaker). While the mentioned package was written in a functional way, current one embraces OO architecture in a sake of readability, maintainability, and extendability.  
 
+## Installation
+```
+composer require lezhnev74/pasvl
+```
+
 ## Example: Valid array
 
 ```php
