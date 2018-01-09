@@ -58,4 +58,13 @@ class NumberValidator extends Validator
         return $data > 0;
     }
 
+    public function min($data, $min): bool
+    {
+        return $this->gte($data, $min);
+    }
+
+    public function max($data, $max): bool
+    {
+        return $this->lte($data, $max);
+    }
 }
