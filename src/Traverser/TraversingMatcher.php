@@ -38,6 +38,8 @@ class TraversingMatcher
      */
     function match(array $patterns, iterable $data): void
     {
+        $this->preparePatterns($patterns);
+
         try {
             $this->matchDataToPattern($patterns, $data);
         } catch (DataNoMatching $e) {
@@ -65,6 +67,32 @@ class TraversingMatcher
     }
 
     /**
+     * Go through the pattern definition and validate/parse all the pattern strings
+     * @param array $patterns
+     */
+    protected function preparePatterns(array $patterns)
+    {
+        $parseString = function ($pattern) {
+            if (!isset($this->patterns[$pattern])) {
+                $this->patterns[$pattern] = new Pattern($pattern, null, true);
+            }
+        };
+
+        // parse pattern string once
+        foreach ($patterns as $patternKey => $patternValue) {
+            // keys
+            $parseString($patternKey);
+
+            // values
+            if (is_iterable($patternValue)) {
+                $this->preparePatterns($patternValue);
+            } else {
+                $parseString($patternValue);
+            }
+        }
+    }
+
+    /**
      * Analyze one level of data
      *
      * @param array $patterns
@@ -79,70 +107,85 @@ class TraversingMatcher
             return (int)(substr($key1, 0, 1) == ":" && substr($key2, 0, 1) != ":");
         });
 
-        // Collects all matching patterns for each dataKey: [ dataKey => patternKey[] ]
-        $dataToPatternMatches = [];
+        // Edge case - empty array
+        // Array will match pattern if it has dismissible keys with quantifiers: *, ?, and {0,..}
+        if (!count($data)) {
 
-        foreach ($data as $dataKey => $dataValue) {
-
-            // 1. Find matching patterns for dataKey
-            $perspectivePatternKeys = $this->findMatchedPatterns($dataKey, array_keys($patterns));
-
-
-            if (!count($perspectivePatternKeys)) {
-                throw new DataNoMatching(
-                    $dataKey,
-                    $dataValue,
-                    DataMismatchedPattern::MISMATCHED_KEY
-                );
+            foreach ($patterns as $patternKey => $patternValue) {
+                if (!$this->patterns[$patternKey]->getQuantifier()->isValidQuantity(0)) {
+                    throw new DataNoMatching("", "", DataNoMatching::MISMATCHED_KEY);
+                }
             }
 
-            // 2. Validate dataValue against promising patterns and discard those which does not fit
-            $perspectivePatternKeys = array_filter($perspectivePatternKeys,
-                function ($patternKey) use ($dataKey, $dataValue, $patterns) {
-                    $patternMatched = false;
-                    if (is_array($patterns[$patternKey])) {
-                        // pattern is an array, value must be array as well
-                        if (!is_iterable($dataValue)) {
-                            // value does not match the pattern (array expected)
-                            // this is not the right pattern pair
+        } else {
+            // Usual case when data set is not empty
+            // Collects all matching patterns for each dataKey: [ dataKey => patternKey[] ]
+            $dataToPatternMatches = [];
+
+            foreach ($data as $dataKey => $dataValue) {
+
+                // 1. Find matching patterns for dataKey
+                $perspectivePatternKeys = $this->findMatchedPatterns($dataKey, array_keys($patterns));
+
+
+                if (!count($perspectivePatternKeys)) {
+                    throw new DataNoMatching(
+                        $dataKey,
+                        $dataValue,
+                        DataMismatchedPattern::MISMATCHED_KEY
+                    );
+                }
+
+                // 2. Validate dataValue against promising patterns and discard those which does not fit
+                $perspectivePatternKeys = array_filter($perspectivePatternKeys,
+                    function ($patternKey) use ($dataKey, $dataValue, $patterns) {
+                        $patternMatched = false;
+                        if (is_array($patterns[$patternKey])) {
+                            // pattern is an array, value must be array as well
+                            if (!is_iterable($dataValue)) {
+                                // value does not match the pattern (array expected)
+                                // this is not the right pattern pair
+                            } else {
+                                // go down and analyze next array level
+                                $this->keysQueue->push([$patternKey, $dataKey]);
+                                $this->matchDataToPattern($patterns[$patternKey], $dataValue);
+                                $this->keysQueue->pop();
+
+                                $patternMatched = true;
+                            }
                         } else {
-                            // go down and analyze next array level
-                            $this->keysQueue->push([$patternKey, $dataKey]);
-                            $this->matchDataToPattern($patterns[$patternKey], $dataValue);
-                            $this->keysQueue->pop();
+                            // the pattern is not an array and value is also not an array, validate one against another
+                            $matched_patterns = $this->findMatchedPatterns($dataValue, [$patterns[$patternKey]]);
 
-                            $patternMatched = true;
+                            // value matched pattern
+                            $patternMatched = (bool)count($matched_patterns);
                         }
-                    } else {
-                        // the pattern is not an array and value is also not an array, validate one against another
-                        $matched_patterns = $this->findMatchedPatterns($dataValue, [$patterns[$patternKey]]);
 
-                        // value matched pattern
-                        $patternMatched = (bool)count($matched_patterns);
+                        return $patternMatched;
                     }
+                );
 
-                    return $patternMatched;
-                }
-            );
-
-            $dataToPatternMatches[$dataKey] = $perspectivePatternKeys;
-        }
-
-        $combinations = array_filter($this->getCombinations($dataToPatternMatches), function ($combination) {
-            // validate this combination against patterns' quantifiers
-            foreach (array_count_values($combination) as $patternKey => $count) {
-                if (!$this->patterns[$patternKey]->getQuantifier()->isValidQuantity($count)) {
-                    return false;
-                }
+                $dataToPatternMatches[$dataKey] = $perspectivePatternKeys;
             }
 
-            return true;
-        });
+            $combinations = array_filter($this->getCombinations($dataToPatternMatches), function ($combination) {
+                // validate this combination against patterns' quantifiers
+                foreach (array_count_values($combination) as $patternKey => $count) {
+                    if (!$this->patterns[$patternKey]->getQuantifier()->isValidQuantity($count)) {
+                        return false;
+                    }
+                }
 
-        if (!count($combinations)) {
-            // no matching patterns found for this data kay->value pair
-            throw new DataNoMatching("", "", DataNoMatching::MISMATCHED_KEY);
+                return true;
+            });
+
+            if (!count($combinations)) {
+                // no matching patterns found for this data kay->value pair
+                throw new DataNoMatching("", "", DataNoMatching::MISMATCHED_KEY);
+            }
         }
+
+
     }
 
     /**
@@ -157,10 +200,10 @@ class TraversingMatcher
     {
         $matchedPatterns = [];
         foreach ($patterns as $pattern_key => $pattern) {
-            // parse pattern string once
-            if (!isset($this->patterns[$pattern])) {
-                $this->patterns[$pattern] = new Pattern($pattern, null, true);
-            }
+//            // parse pattern string once
+//            if (!isset($this->patterns[$pattern])) {
+//                $this->patterns[$pattern] = new Pattern($pattern, null, true);
+//            }
             $mainValidator = $this
                 ->validatorLocator
                 ->getValidatorClass($this->patterns[$pattern]->getMainValidator()->getName());

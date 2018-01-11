@@ -214,4 +214,11 @@ class TraversingMatcherTest extends TestCase
         $matcher = new TraversingMatcher(new ValidatorLocator());
         $matcher->match($pattern, []);
     }
+
+    function test_it_matches_empty_array_against_asterisks()
+    {
+        $matcher = new TraversingMatcher(new ValidatorLocator());
+        $matcher->match(["*" => ":any"], []);
+        $this->addToAssertionCount(1);
+    }
 }
