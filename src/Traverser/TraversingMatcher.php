@@ -70,6 +70,7 @@ class TraversingMatcher
      * @param array $patterns
      * @param iterable $data
      * @throws DataMismatchedPattern
+     * @throws DataNoMatching
      */
     protected function matchDataToPattern(array $patterns, iterable $data)
     {
@@ -140,11 +141,7 @@ class TraversingMatcher
 
         if (!count($combinations)) {
             // no matching patterns found for this data kay->value pair
-            throw new DataNoMatching(
-                $dataKey,
-                $dataValue,
-                DataNoMatching::MISMATCHED_VALUE
-            );
+            throw new DataNoMatching("", "", DataNoMatching::MISMATCHED_KEY);
         }
     }
 
@@ -213,6 +210,6 @@ class TraversingMatcher
             }
             $result = $tmp;
         }
-        return $result;
+        return $result == [[]] ? [] : $result;
     }
 }

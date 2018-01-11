@@ -205,4 +205,13 @@ class TraversingMatcherTest extends TestCase
         }
 
     }
+
+    function test_it_handles_empty_array_case()
+    {
+        $this->expectException(FailReport::class);
+
+        $pattern = ["name" => "Woz"];
+        $matcher = new TraversingMatcher(new ValidatorLocator());
+        $matcher->match($pattern, []);
+    }
 }
