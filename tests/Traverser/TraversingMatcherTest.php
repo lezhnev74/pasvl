@@ -16,6 +16,24 @@ class TraversingMatcherTest extends TestCase
         return [
             [
                 [
+                    "name" => "",
+                    "lastname" => "",
+                ],
+                [
+                    ":string :regex(#\w{0,4}#) {1}" => ":any",
+                    ":string :regex(#\w{0,}#) {1}" => ":any",
+                ],
+            ],
+            [
+                [
+                    "name" => "John",
+                ],
+                [
+                    ":string :regex(#\w{1,4}#) {1}" => ":any",
+                ],
+            ],
+            [
+                [
                     "array" => ["a" => 1, "c" => 2, "b" => 3],
                 ],
                 [

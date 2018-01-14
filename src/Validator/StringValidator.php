@@ -39,15 +39,23 @@ class StringValidator extends Validator
         return mb_strpos($data, $needle) !== false;
     }
 
-    public function regexp($data, string $pattern): bool
+    /**
+     * This regexp methods deserve a special comment.
+     * Since there can be commas in pattern definition like this: ":regex(#[a-z]{1,2}#)"
+     * So the pattern analyzer will split it into an array of  ["#[a-z]{1","2}#"].
+     * That's why code merges it back again
+     */
+    public function regexp($data, ...$pattern): bool
     {
-        return preg_match($pattern, $data);
+        $merged_pattern = implode(",", $pattern);
+        return preg_match($merged_pattern, $data);
     }
 
-    public function regex($data, string $pattern): bool
+    public function regex($data, ...$pattern): bool
     {
-        return $this->regexp($data, $pattern);
+        return call_user_func_array([$this, "regexp"], array_merge([$data], $pattern));
     }
+
 
     public function starts($data, string $starts): bool
     {
