@@ -169,7 +169,7 @@ class TraversingMatcherTest extends TestCase
     function test_validates_simple_array2()
     {
 
-        $data = [
+        $data    = [
             'a_key' => 'a_value',
             'b_key' => [
                 'c_key' => 12,
@@ -220,5 +220,54 @@ class TraversingMatcherTest extends TestCase
         $matcher = new TraversingMatcher(new ValidatorLocator());
         $matcher->match(["*" => ":any"], []);
         $this->addToAssertionCount(1);
+    }
+
+    function test_fail_report_has_expected_data()
+    {
+
+        $data    = [
+            [
+                "name" => "Danutė Sigrid Espinosa",
+                "events" => [
+                    [
+                        "date" => "01.01.2001",
+                        "event" => "Birthdate",
+                    ],
+                    [
+                        "date" => "15.05.2019",
+                        "event" => "",
+                    ],
+                ],
+            ],
+        ];
+        $pattern = [
+            "*" => [
+                "name" => ":string :min(1)",
+                "events" => [
+                    "*" => [
+                        "event" => ":string :min(1)",
+                        "date" => ":string :date",
+                    ],
+                ],
+            ],
+        ];
+
+
+        $matcher = new TraversingMatcher(new ValidatorLocator());
+        try {
+            $matcher->match($pattern, $data);
+            $this->fail();
+        } catch (FailReport $report) {
+
+            $this->assertFalse($report->isKeyFailed());
+            $this->assertTrue($report->isValueFailed());
+            $this->assertEquals([0, "events", 1], $report->getDataKeyChain());
+            $this->assertEquals(3, $report->getFailedPatternLevel());
+            $this->assertEquals([
+                "event" => ":string :min(1)",
+                "date" => ":string :date",
+            ], $report->getMismatchPattern());
+        }
+
     }
 }

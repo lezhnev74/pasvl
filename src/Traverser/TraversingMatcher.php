@@ -127,7 +127,6 @@ class TraversingMatcher
                 // 1. Find matching patterns for dataKey
                 $perspectivePatternKeys = $this->findMatchedPatterns($dataKey, array_keys($patterns));
 
-
                 if (!count($perspectivePatternKeys)) {
                     throw new DataNoMatching(
                         $dataKey,
@@ -165,6 +164,14 @@ class TraversingMatcher
                     }
                 );
 
+                if (!count($perspectivePatternKeys)) {
+                    throw new DataNoMatching(
+                        $dataKey,
+                        $dataValue,
+                        DataMismatchedPattern::MISMATCHED_VALUE
+                    );
+                }
+
                 $dataToPatternMatches[$dataKey] = $perspectivePatternKeys;
             }
 
@@ -179,10 +186,10 @@ class TraversingMatcher
                 return true;
             });
 
-            if (!count($combinations)) {
-                // no matching patterns found for this data kay->value pair
-                throw new DataNoMatching("", "", DataNoMatching::MISMATCHED_KEY);
-            }
+//            if (!count($combinations)) {
+//                // no matching patterns found for this data kay->value pair
+//                throw new DataNoMatching("", "", DataNoMatching::MISMATCHED_VALUE);
+//            }
         }
 
 
