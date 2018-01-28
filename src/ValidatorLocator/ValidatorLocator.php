@@ -6,6 +6,8 @@
 
 namespace PASVL\ValidatorLocator;
 
+use PASVL\Validator\Validator;
+
 
 /**
  * Takes validator string name and locates the corresponding class
@@ -15,7 +17,7 @@ class ValidatorLocator
 {
     protected $cache = [];
 
-    public function getValidatorClass(string $name): object
+    public function getValidatorClass(string $name): Validator
     {
         if (!($validator = @$this->cache[$name])) {
             if (!($validator = $this->locate($name))) {
@@ -29,7 +31,7 @@ class ValidatorLocator
         return $this->cache[$name];
     }
 
-    protected function locateDefault(string $name): ?object
+    protected function locateDefault(string $name): ?Validator
     {
 
         $fqcn = "\\PASVL\\Validator\\" . ucfirst($name) . "Validator";
