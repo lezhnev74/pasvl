@@ -4,8 +4,10 @@
  * Date: 03/01/2018
  */
 
-namespace PASVL\Traverser;
+namespace PASVL\Tests\Traverser;
 
+use PASVL\Traverser\FailReport;
+use PASVL\Traverser\TraversingMatcher;
 use PASVL\ValidatorLocator\ValidatorLocator;
 use PHPUnit\Framework\TestCase;
 

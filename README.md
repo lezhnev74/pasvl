@@ -19,6 +19,12 @@ composer require lezhnev74/pasvl
 ## Example: Valid array
 
 ```php
+
+// import fully qualified class names to your namespace
+use PASVL\Traverser\TraversingMatcher;
+use PASVL\ValidatorLocator\ValidatorLocator;
+
+
 $data = [
                [
                    'type' => 'book',
@@ -57,6 +63,12 @@ $traverser->match($pattern, $data); // returns void, throws Report on Fail
 ## Example: Invalid array
 
 ```php
+// import fully qualified class names to your namespace
+use PASVL\Traverser\FailReport;
+use PASVL\Traverser\TraversingMatcher;
+use PASVL\ValidatorLocator\ValidatorLocator;
+
+
 $data = [
     "password"=>"weak"
 ];
