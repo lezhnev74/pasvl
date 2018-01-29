@@ -21,7 +21,7 @@ class PatternTest extends TestCase
         return [
             [
                 ":string()",
-                new Validator("key",[':string()']),
+                new Validator("key", [':string()']),
                 [],
                 Quantifier::asRequired(),
             ],

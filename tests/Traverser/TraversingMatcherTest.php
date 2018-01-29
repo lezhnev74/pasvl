@@ -290,4 +290,36 @@ class TraversingMatcherTest extends TestCase
         }
 
     }
+
+    function test_henry()
+    {
+        $data    = ["password" => "weak"];
+        $pattern = [
+            //'*' => [
+                "password" => ":string :min(3)"    // does not work
+            //],
+
+        ];
+
+        $matcher = new TraversingMatcher(new ValidatorLocator());
+        try {
+            $matcher->match($pattern, $data);
+            $this->fail("passed");
+        } catch (FailReport $report) {
+
+            echo "\n--- Array does not match a pattern ---\n";
+            echo "Reason: " . ($report->isKeyFailed() ? "Invalid key found" : "Invalid value found") . "\n";
+            echo "Data keys chain to invalid data: ";
+            if ($report->getFailedPatternLevel()) {
+                echo implode(" => ", $report->getDataKeyChain());
+                echo " => ";
+            }
+            echo $report->getMismatchDataKey() . "\n";
+            if ($report->isValueFailed()) {
+                echo "Invalid value: ";
+                echo json_encode($report->getMismatchDataValue(), JSON_PRETTY_PRINT) . "\n";
+            }
+            echo "Mismatched pattern: " . json_encode($report->getMismatchPattern(), JSON_PRETTY_PRINT) . "\n";
+        }
+    }
 }

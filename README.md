@@ -74,9 +74,7 @@ $data = [
 ];
 
 $pattern = [
-    '*' => [
-        "password" => ":string :min(6)"
-    ],
+    "password" => ":string :min(6)"
 ];
 
 
