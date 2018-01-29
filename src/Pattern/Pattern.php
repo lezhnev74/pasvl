@@ -36,8 +36,8 @@ class Pattern
      */
     public function __construct(string $original_pattern, $context = null, $throw_on_invalid_pattern = false)
     {
-        $this->original_pattern = trim($original_pattern);
-        $this->context = $context;
+        $this->original_pattern         = trim($original_pattern);
+        $this->context                  = $context;
         $this->throw_on_invalid_pattern = $throw_on_invalid_pattern;
 
         $this->parse($original_pattern);
@@ -86,11 +86,11 @@ class Pattern
      */
     protected function parse(string $user_pattern)
     {
-        $label_regexp_pattern = "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*";
-        $quantifier_regexp_pattern = "(?'quantifier'(?'single_quantifier'[\*|\?|!])|(?'interval_quantifier'{(?'quantifier_min_boundary'\d+)(?'quantifier_max_boundary',\d+)?}))";
+        $label_regexp_pattern        = "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*";
+        $quantifier_regexp_pattern   = "(?'quantifier'(?'single_quantifier'[\*|\?|!])|(?'interval_quantifier'{(?'quantifier_min_boundary'\d+)(?'quantifier_max_boundary',\d*)?}))";
         $validator_arguments_pattern = "(\((?'arguments'.+,?)+\))?";
-        $full_validator = "(?'validator':(?'name'$label_regexp_pattern)$validator_arguments_pattern)";
-        $full_regexp_pattern = "#$full_validator*?$quantifier_regexp_pattern?#";
+        $full_validator              = "(?'validator':(?'name'$label_regexp_pattern)$validator_arguments_pattern)";
+        $full_regexp_pattern         = "#$full_validator*?$quantifier_regexp_pattern?#";
 
         preg_match_all($full_regexp_pattern, $user_pattern, $matches, PREG_SET_ORDER, 0);
 
@@ -209,9 +209,17 @@ class Pattern
                     }
                 } else {
                     if (isset($match['quantifier_max_boundary'])) {
+
+                        $max_boundary = ltrim($match['quantifier_max_boundary'], ",");
+                        if ($max_boundary == "") {
+                            $max_boundary = PHP_INT_MAX;
+                        } else {
+                            $max_boundary = (int)$max_boundary;
+                        }
+
                         $quantifier_options = [
                             (int)$match['quantifier_min_boundary'],
-                            (int)ltrim($match['quantifier_max_boundary'], ","),
+                            $max_boundary,
                         ];
                     } else {
                         $quantifier_options = [

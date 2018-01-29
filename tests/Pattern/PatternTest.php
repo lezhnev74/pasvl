@@ -20,6 +20,12 @@ class PatternTest extends TestCase
     {
         return [
             [
+                "{3,}",
+                new Validator("any"),
+                [],
+                Quantifier::asInterval(3, PHP_INT_MAX),
+            ],
+            [
                 ":string()",
                 new Validator("key", [':string()']),
                 [],
