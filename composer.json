@@ -29,5 +29,8 @@
         "psr-4": {
             "APIDev\\Tests\\": "tests/"
         }
-    }
+    },
+    "repositories": [
+        { "type": "vcs", "url": "https://github.com/mycompany/privaterepo" }
+    ],
 }

@@ -30,13 +30,13 @@ class Pattern
 
     /**
      * Pattern constructor.
-     * @param string $original_pattern
+     * @param string|int $original_pattern
      * @param mixed $context
      * @param bool $throw_on_invalid_pattern
      */
-    public function __construct(string $original_pattern, $context = null, $throw_on_invalid_pattern = false)
+    public function __construct($original_pattern, $context = null, $throw_on_invalid_pattern = false)
     {
-        $this->original_pattern         = trim($original_pattern);
+        $this->original_pattern         = is_int($original_pattern) ? $original_pattern : trim($original_pattern);
         $this->context                  = $context;
         $this->throw_on_invalid_pattern = $throw_on_invalid_pattern;
 
