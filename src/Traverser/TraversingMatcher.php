@@ -8,6 +8,7 @@ namespace PASVL\Traverser;
 
 
 use PASVL\Pattern\Pattern;
+use PASVL\Traverser\VO\FailedReason;
 use PASVL\ValidatorLocator\ValidatorLocator;
 
 class TraversingMatcher
@@ -26,7 +27,7 @@ class TraversingMatcher
     public function __construct(ValidatorLocator $validatorLocator)
     {
         $this->validatorLocator = $validatorLocator;
-        $this->keysQueue = new \SplQueue();
+        $this->keysQueue        = new \SplQueue();
     }
 
     /**
@@ -44,18 +45,18 @@ class TraversingMatcher
             $this->matchDataToPattern($patterns, $data);
         } catch (DataNoMatching $e) {
 
-            $failed_pattern = $patterns;
+            $failed_pattern    = $patterns;
             $pattern_key_chain = [];
-            $data_key_chain = [];
+            $data_key_chain    = [];
             foreach ($this->keysQueue as $queuePosition) {
                 $pattern_key_chain[] = $queuePosition[0];
-                $failed_pattern = $failed_pattern[$queuePosition[0]];
+                $failed_pattern      = $failed_pattern[$queuePosition[0]];
 
                 $data_key_chain[] = $queuePosition[1];
             }
 
             throw new FailReport(
-                (int)$e->isValueType(),
+                $e->getReason(),
                 $e->getKey(),
                 $e->getValue(),
                 $failed_pattern,
@@ -113,7 +114,7 @@ class TraversingMatcher
 
             foreach ($patterns as $patternKey => $patternValue) {
                 if (!$this->patterns[$patternKey]->getQuantifier()->isValidQuantity(0)) {
-                    throw new DataNoMatching("", "", DataNoMatching::MISMATCHED_KEY);
+                    throw new DataNoMatching("", "", FailedReason::fromFailedKey());
                 }
             }
 
@@ -131,7 +132,7 @@ class TraversingMatcher
                     throw new DataNoMatching(
                         $dataKey,
                         $dataValue,
-                        DataMismatchedPattern::MISMATCHED_KEY
+                        FailedReason::fromFailedKey()
                     );
                 }
 
@@ -168,13 +169,14 @@ class TraversingMatcher
                     throw new DataNoMatching(
                         $dataKey,
                         $dataValue,
-                        DataMismatchedPattern::MISMATCHED_VALUE
+                        FailedReason::fromFailedValue()
                     );
                 }
 
                 $dataToPatternMatches[$dataKey] = $perspectivePatternKeys;
             }
 
+            // Ok we have found patterns that match both keys and values, but now we need to validate it against quantity expectations
             $combinations = array_filter($this->getCombinations($dataToPatternMatches), function ($combination) {
                 // validate this combination against patterns' quantifiers
                 foreach (array_count_values($combination) as $patternKey => $count) {
@@ -186,10 +188,11 @@ class TraversingMatcher
                 return true;
             });
 
-//            if (!count($combinations)) {
-//                // no matching patterns found for this data kay->value pair
-//                throw new DataNoMatching("", "", DataNoMatching::MISMATCHED_VALUE);
-//            }
+            // No we detected combinations that matched quanitifiers, if there were no such things... fail
+            if (!count($combinations)) {
+                // it is a key problem since quantifier did not match
+                throw new DataNoMatching("", "", FailedReason::fromFailedKeyQuantity());
+            }
         }
 
 

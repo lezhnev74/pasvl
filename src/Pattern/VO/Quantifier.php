@@ -29,7 +29,7 @@ class Quantifier
         }
 
         $this->from = $from;
-        $this->to = $to;
+        $this->to   = $to;
     }
 
     /**

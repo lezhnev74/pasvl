@@ -7,30 +7,29 @@
 namespace PASVL\Traverser;
 
 
+use PASVL\Traverser\VO\FailedReason;
+
 class DataNoMatching extends \InvalidArgumentException
 {
-    const MISMATCHED_KEY = 1;
-    const MISMATCHED_VALUE = 2;
-
     /** @var mixed */
     protected $key;
     /** @var mixed */
     protected $value;
-    /** @var int */
-    protected $mismatched_type;
+    /** @var FailedReason */
+    protected $reason;
 
     /**
      * DataNoMatching constructor.
      * @param mixed $key
      * @param mixed $value
-     * @param int $mismatched_type
+     * @param int $reason
      */
-    public function __construct($key, $value, int $mismatched_type)
+    public function __construct($key, $value, FailedReason $reason)
     {
         parent::__construct("Invalid data found");
-        $this->key = $key;
-        $this->value = $value;
-        $this->mismatched_type = $mismatched_type;
+        $this->key    = $key;
+        $this->value  = $value;
+        $this->reason = $reason;
     }
 
     /**
@@ -50,22 +49,12 @@ class DataNoMatching extends \InvalidArgumentException
     }
 
     /**
-     * @return int
+     * @return FailedReason
      */
-    public function getMismatchedType(): int
+    public function getReason(): FailedReason
     {
-        return $this->mismatched_type;
+        return $this->reason;
     }
 
-
-    public function isKeyType(): bool
-    {
-        return $this->getMismatchedType() == self::MISMATCHED_KEY;
-    }
-
-    public function isValueType(): bool
-    {
-        return $this->getMismatchedType() == self::MISMATCHED_VALUE;
-    }
 
 }

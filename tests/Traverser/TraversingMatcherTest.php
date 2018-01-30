@@ -13,6 +13,65 @@ use PHPUnit\Framework\TestCase;
 
 class TraversingMatcherTest extends TestCase
 {
+    function dataProviderInvalid()
+    {
+        return [
+            [
+                ["a", "b",],
+                ['{3,}' => ":any",],
+            ],
+            [
+                [
+                    "people" => [
+                        [
+                            "passport" => [
+                                "names" => [
+                                    "john",
+                                    "steven",
+                                    "paul",
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'people' => [
+                        "*" => [
+                            "passport" => [
+                                'names' => [
+                                    "{1,2}" => ":string",
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                [
+                    ["groupName" => "sales"],
+                    ["groupName" => "Other"],
+                ],
+                [
+                    '{3,}' => [ // TEST to check if minimum rows of 3 is present above
+                        'groupName' => ':string',
+                    ],
+                ],
+
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderInvalid
+     * @throws FailReport
+     */
+    function test_matches_invalid_data($data, $pattern)
+    {
+        $this->expectException(FailReport::class);
+        $matcher = new TraversingMatcher(new ValidatorLocator());
+        $matcher->match($pattern, $data);
+    }
+
     function dataProviderValid()
     {
         return [
@@ -279,8 +338,8 @@ class TraversingMatcherTest extends TestCase
             $this->fail();
         } catch (FailReport $report) {
 
-            $this->assertFalse($report->isKeyFailed());
-            $this->assertTrue($report->isValueFailed());
+            $this->assertFalse($report->getReason()->isKeyType());
+            $this->assertTrue($report->getReason()->isValueType());
             $this->assertEquals([0, "events", 1], $report->getDataKeyChain());
             $this->assertEquals(3, $report->getFailedPatternLevel());
             $this->assertEquals([
@@ -290,4 +349,6 @@ class TraversingMatcherTest extends TestCase
         }
 
     }
+
+
 }
