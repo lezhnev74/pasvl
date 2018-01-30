@@ -21,6 +21,18 @@ class TraversingMatcherTest extends TestCase
                 ['{3,}' => ":any",],
             ],
             [
+                ["a", "b",],
+                ['{0,1}' => ":any",],
+            ],
+            [
+                ["a"],
+                ['{0}' => ":any",],
+            ],
+            [
+                ["a"],
+                ['missed' => ":any",],
+            ],
+            [
                 [
                     "people" => [
                         [

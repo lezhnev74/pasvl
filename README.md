@@ -196,6 +196,9 @@ $pattern_invalid = [":string"=>""];
 $pattern_valid = [":int"=>""];
 ```
 
+## 🏆 Contributors
+- **Henry Combrinck**. Henry tested the library extensively on real data and found tricky bugs and edge cases. Awesome contribution to make the package valuable to the community.  
+
 ## License
 
 This project is licensed under the terms of the MIT license.
