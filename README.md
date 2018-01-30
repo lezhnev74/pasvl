@@ -80,17 +80,23 @@ $pattern = [
 
 $traverser = new TraversingMatcher(new ValidatorLocator());
 try {
-    $traverser->match($pattern, $data); // returns void, throws Report on Fail
+    $traverser->match($pattern, $data); // returns void, throws Report on Fail   
 } catch (FailReport $report) {
     echo "\n--- Array does not match a pattern ---\n";
-    echo "Reason: " . ($report->isKeyFailed() ? "Invalid key found" : "Invalid value found") . "\n";
+
+    echo "Reason: ";
+    echo $report->getReason()->isValueType() ? "Invalid value found" : "";
+    echo $report->getReason()->isKeyType() ? "Invalid key found" : "";
+    echo $report->getReason()->isKeyQuantityType() ? "Invalid key quantity found" : "";
+    echo "\n";
+
     echo "Data keys chain to invalid data: ";
     if ($report->getFailedPatternLevel()) {
         echo implode(" => ", $report->getDataKeyChain());
         echo " => ";
     }
     echo $report->getMismatchDataKey() . "\n";
-    if ($report->isValueFailed()) {
+    if ($report->getReason()->isValueType()) {
         echo "Invalid value: ";
         echo json_encode($report->getMismatchDataValue(), JSON_PRETTY_PRINT) . "\n";
     }
@@ -105,14 +111,12 @@ Reason: Invalid value found
 Data keys chain to invalid data: password
 Invalid value: "weak"
 Mismatched pattern: {
-    "*": {
-        "password": ":string :min(6)"
-    }
+    "password": ":string :min(6)"
 }
 ```
 
 The report allows you to locate the problem location. It has following information:
-- exact key or value that failed validation
+- exact key or value that failed validation (including a special case when keys failed quantity validation)
 - the pattern that was compared to
 - the level of mismatched data in case it is located deep inside the array
 - chain of data and pattern keys to show breadcrumbs down to mismatched data and pattern
