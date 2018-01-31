@@ -149,14 +149,14 @@ A pattern can be set in a few ways:
     ```
 - **as validators list:**
     ```php
-    //array can have any number of string keys of exactly 3 bytes long
+    //array can have any number of string keys of exactly 4 bytes long
     // here "string" - main validator, "len" - sub-validator
     $pattern = [":string :len(4)"=>"Nico"]
     ```
     In this case no other symbols are allowed except validator names and arguments. Invalid pattern: `:string name`.
 - **as validators list with quantifier:**
     ```php
-    //array can have at least 1, at most 2 string keys matching given regexp
+    //array can have any count (zero or more) string keys matching given regexp
     $pattern = [":string :regexp(/Nic(o|ky)/) *"=>"Nico"]
     ```
 

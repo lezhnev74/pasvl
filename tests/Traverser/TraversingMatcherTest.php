@@ -241,7 +241,7 @@ class TraversingMatcherTest extends TestCase
             $this->addToAssertionCount(1);
         } catch (FailReport $report) {
             echo "\n--- Array does not match a pattern ---\n";
-            echo "Reason: " . ($report->isKeyFailed() ? "Invalid key found" : "Invalid value found") . "\n";
+            echo "Reason: " . ($report->getReason()->isKeyType() ? "Invalid key found" : "Invalid value found") . "\n";
             echo "Data keys chain to invalid data: ";
             if ($report->getFailedPatternLevel()) {
                 echo implode(" => ", $report->getDataKeyChain());
@@ -281,7 +281,7 @@ class TraversingMatcherTest extends TestCase
             $this->addToAssertionCount(1);
         } catch (FailReport $report) {
             echo "\n--- Array does not match a pattern ---\n";
-            echo "Reason: " . ($report->isKeyFailed() ? "Invalid key found" : "Invalid value found") . "\n";
+            echo "Reason: " . ($report->getReason()->isKeyType() ? "Invalid key found" : "Invalid value found") . "\n";
             if ($report->getFailedPatternLevel()) {
                 echo "Data keys chain to invalid data: ";
                 echo implode(" => ", $report->getDataKeyChain());
