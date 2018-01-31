@@ -127,13 +127,14 @@ Notice: while it allows you to locate the level of mismatched data, it will not 
 
 Any array consists of keys and values. A pattern can set expectations for both.
 
-Usually pattern consists of a 3 parts:
+![](visual.jpg)
+
+A pattern consists of a 3 parts:
 - main validator: `:string`
 - optional sub-validators: `:min(2) :max(4)`
 - quantifier (for keys only): `{1,2}`
 
-Example: `:string :min(1) :max(4) {1,2}`:
-
+Example: `:string :min(1) :max(4) {1,2}`.
 
 ### Pattern definition
 
