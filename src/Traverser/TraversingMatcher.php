@@ -49,10 +49,15 @@ class TraversingMatcher
             $pattern_key_chain = [];
             $data_key_chain    = [];
             foreach ($this->keysQueue as $queuePosition) {
-                $pattern_key_chain[] = $queuePosition[0];
-                $failed_pattern      = $failed_pattern[$queuePosition[0]];
+//                $pattern_key_chain[] = $queuePosition[0];
+//                $failed_pattern      = $failed_pattern[$queuePosition[0]];
+//
+//                $data_key_chain[] = $queuePosition[1];
 
-                $data_key_chain[] = $queuePosition[1];
+                //$pattern_key_chain[] = $queuePosition[0];
+
+                $failed_pattern   = $queuePosition[1];
+                $data_key_chain[] = $queuePosition[0];
             }
 
             throw new FailReport(
@@ -125,8 +130,12 @@ class TraversingMatcher
 
             foreach ($data as $dataKey => $dataValue) {
 
-                // 1. Find matching patterns for dataKey
+                // Now I work with specific dataKey
+                $this->keysQueue->push([$dataKey, $patterns]);
+
+                // 1. What patterns match this dataKey? Find matching patterns for dataKey
                 $perspectivePatternKeys = $this->findMatchedPatterns($dataKey, array_keys($patterns));
+                //var_dump("For key [$dataKey] perspective patterns are", $perspectivePatternKeys);
 
                 if (!count($perspectivePatternKeys)) {
                     throw new DataNoMatching(
@@ -139,26 +148,40 @@ class TraversingMatcher
                 // 2. Validate dataValue against promising patterns and discard those which does not fit
                 $perspectivePatternKeys = array_filter($perspectivePatternKeys,
                     function ($patternKey) use ($dataKey, $dataValue, $patterns) {
+
                         $patternMatched = false;
+
                         if (is_array($patterns[$patternKey])) {
+
                             // pattern is an array, value must be array as well
                             if (!is_iterable($dataValue)) {
+
                                 // value does not match the pattern (array expected)
                                 // this is not the right pattern pair
-                            } else {
-                                // go down and analyze next array level
-                                $this->keysQueue->push([$patternKey, $dataKey]);
-                                $this->matchDataToPattern($patterns[$patternKey], $dataValue);
-                                $this->keysQueue->pop();
 
-                                $patternMatched = true;
+                            } else {
+
+                                // go down and analyze next array level
+                                //$this->keysQueue->push([$patternKey, $dataKey]);
+                                try {
+                                    $this->matchDataToPattern($patterns[$patternKey], $dataValue);
+                                    $patternMatched = true;
+                                } catch (DataNoMatching $e) {
+                                    // This means that this pattern cannot be matched against given value,
+                                    // this exception should not bubble up, it just mean, that pattern did not match
+                                }
+                                //$this->keysQueue->pop();
+
                             }
+
                         } else {
+
                             // the pattern is not an array and value is also not an array, validate one against another
                             $matched_patterns = $this->findMatchedPatterns($dataValue, [$patterns[$patternKey]]);
 
                             // value matched pattern
                             $patternMatched = (bool)count($matched_patterns);
+
                         }
 
                         return $patternMatched;
@@ -166,6 +189,7 @@ class TraversingMatcher
                 );
 
                 if (!count($perspectivePatternKeys)) {
+                    //var_dump(iterator_to_array($this->keysQueue));
                     throw new DataNoMatching(
                         $dataKey,
                         $dataValue,
@@ -174,6 +198,7 @@ class TraversingMatcher
                 }
 
                 $dataToPatternMatches[$dataKey] = $perspectivePatternKeys;
+                $this->keysQueue->pop();
             }
 
             // Ok we have found patterns that match both keys and values, but now we need to validate it against quantity expectations
