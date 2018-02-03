@@ -1,36 +1,27 @@
 <?php
 /**
  * @author Dmitriy Lezhnev <lezhnev.work@gmail.com>
- * Date: 03/01/2018
+ * Date: 03/02/2018
  */
+declare(strict_types=1);
+
 
 namespace PASVL\Tests\Traverser;
 
+
 use PASVL\Traverser\FailReport;
-use PASVL\Traverser\TraversingMatcher;
+use PASVL\Traverser\VO\Traverser;
 use PASVL\ValidatorLocator\ValidatorLocator;
 use PHPUnit\Framework\TestCase;
 
-class TraversingMatcherTest extends TestCase
+class TraverserTest extends TestCase
 {
     function dataProviderInvalid()
     {
         return [
             [
-                ["a", "b",],
-                ['{3,}' => ":any",],
-            ],
-            [
-                ["a", "b",],
-                ['{0,1}' => ":any",],
-            ],
-            [
-                ["a"],
-                ['{0}' => ":any",],
-            ],
-            [
-                ["a"],
-                ['missed' => ":any",],
+                ["method" => "createClient"],
+                ['method' => ':string', 'other' => ':string'],
             ],
             [
                 [
@@ -59,6 +50,23 @@ class TraversingMatcherTest extends TestCase
                 ],
             ],
             [
+                ["a", "b",],
+                ['{3,}' => ":any",],
+            ],
+            [
+                ["a", "b",],
+                ['{0,1}' => ":any",],
+            ],
+            [
+                ["a"],
+                ['{0}' => ":any",],
+            ],
+            [
+                ["a"],
+                ['missed' => ":any",],
+            ],
+
+            [
                 [
                     ["groupName" => "sales"],
                     ["groupName" => "Other"],
@@ -80,13 +88,83 @@ class TraversingMatcherTest extends TestCase
     function test_matches_invalid_data($data, $pattern)
     {
         $this->expectException(FailReport::class);
-        $matcher = new TraversingMatcher(new ValidatorLocator());
+        $matcher = new Traverser(new ValidatorLocator());
         $matcher->match($pattern, $data);
     }
 
     function dataProviderValid()
     {
         return [
+            [
+                [
+                    "Other" => [
+                        "rw",
+                        "move_into",
+                        "note",
+                        "owner",
+                        "priority",
+                        "owner",
+                    ],
+                    "sales" => [
+                        "rw",
+                    ],
+                ],
+                [
+
+                    'Other!' => [
+                        'rw',
+                        'move_into',
+                        'note',
+                        'owner',
+                        'priority',
+                        'owner',
+                    ],
+                    ':string :min(1)' => [
+                        'rw',
+                    ],
+
+                ],
+            ],
+            [
+                [
+                    ["other" => ["a", "b"]],
+                    ["sales" => ["a"]],
+                ],
+                [
+                    [':string :min(2)' => ['a', 'b']],
+                    [':string :min(1)' => ['a']],
+                ],
+            ],
+            [
+                [
+                    [
+                        "other" => ["a", "b"],
+                        "sales" => ["a"],
+                    ],
+                ],
+                [
+                    '*' => [
+                        ':string :min(2)' => ['a', 'b'],
+                        ':string :min(1)' => ['a'],
+                    ],
+                ],
+            ],
+            [
+                [
+                    'a_key' => 'a_value',
+                    'b_key' => [
+                        'c_key' => 12,
+                        'd_key' => ['a', 'b', 'c'],
+                    ],
+                ],
+                [
+                    'a_key' => ":string",
+                    ':string' => [
+                        ":string" => ":int",
+                        "d_key" => ":array",
+                    ],
+                ],
+            ],
             [
                 [
                     "name" => "",
@@ -231,70 +309,12 @@ class TraversingMatcherTest extends TestCase
 
     /**
      * @dataProvider dataProviderValid
-     * @throws FailReport
      */
     function test_matches_valid_data($data, $pattern)
     {
-        $matcher = new TraversingMatcher(new ValidatorLocator());
-        try {
-            $matcher->match($pattern, $data);
-            $this->addToAssertionCount(1);
-        } catch (FailReport $report) {
-            echo "\n--- Array does not match a pattern ---\n";
-            echo "Reason: " . ($report->getReason()->isKeyType() ? "Invalid key found" : "Invalid value found") . "\n";
-            echo "Data keys chain to invalid data: ";
-            if ($report->getFailedPatternLevel()) {
-                echo implode(" => ", $report->getDataKeyChain());
-                echo " => ";
-            }
-            echo $report->getMismatchDataKey() . "\n";
-            if ($report->isValueFailed()) {
-                echo "Invalid value: ";
-                echo json_encode($report->getMismatchDataValue(), JSON_PRETTY_PRINT) . "\n";
-            }
-            echo "Mismatched pattern: " . json_encode($report->getMismatchPattern(), JSON_PRETTY_PRINT) . "\n";
-            $this->fail();
-        }
-    }
-
-    function test_validates_simple_array2()
-    {
-
-        $data    = [
-            'a_key' => 'a_value',
-            'b_key' => [
-                'c_key' => 12,
-                'd_key' => ['a', 'b', 'c'],
-            ],
-        ];
-        $pattern = [
-            'a_key' => ":string",
-            ':string' => [
-                ":string" => ":int",
-                "d_key" => ":array",
-            ],
-        ];
-
-        $matcher = new TraversingMatcher(new ValidatorLocator());
-        try {
-            $matcher->match($pattern, $data);
-            $this->addToAssertionCount(1);
-        } catch (FailReport $report) {
-            echo "\n--- Array does not match a pattern ---\n";
-            echo "Reason: " . ($report->getReason()->isKeyType() ? "Invalid key found" : "Invalid value found") . "\n";
-            if ($report->getFailedPatternLevel()) {
-                echo "Data keys chain to invalid data: ";
-                echo implode(" => ", $report->getDataKeyChain());
-                echo " => ";
-            }
-            echo $report->getMismatchDataKey() . "\n";
-            if ($report->isValueFailed()) {
-                echo "Invalid value: ";
-                echo json_encode($report->getMismatchDataValue(), JSON_PRETTY_PRINT) . "\n";
-            }
-            echo "Mismatched pattern: " . json_encode($report->getMismatchPattern(), JSON_PRETTY_PRINT) . "\n";
-        }
-
+        $matcher = new Traverser(new ValidatorLocator());
+        $matcher->match($pattern, $data);
+        $this->addToAssertionCount(1);
     }
 
     function test_it_handles_empty_array_case()
@@ -302,65 +322,14 @@ class TraversingMatcherTest extends TestCase
         $this->expectException(FailReport::class);
 
         $pattern = ["name" => "Woz"];
-        $matcher = new TraversingMatcher(new ValidatorLocator());
+        $matcher = new Traverser(new ValidatorLocator());
         $matcher->match($pattern, []);
     }
 
     function test_it_matches_empty_array_against_asterisks()
     {
-        $matcher = new TraversingMatcher(new ValidatorLocator());
+        $matcher = new Traverser(new ValidatorLocator());
         $matcher->match(["*" => ":any"], []);
         $this->addToAssertionCount(1);
     }
-
-    function test_fail_report_has_expected_data()
-    {
-
-        $data    = [
-            [
-                "name" => "Danutė Sigrid Espinosa",
-                "events" => [
-                    [
-                        "date" => "01.01.2001",
-                        "event" => "Birthdate",
-                    ],
-                    [
-                        "date" => "15.05.2019",
-                        "event" => "",
-                    ],
-                ],
-            ],
-        ];
-        $pattern = [
-            "*" => [
-                "name" => ":string :min(1)",
-                "events" => [
-                    "*" => [
-                        "event" => ":string :min(1)",
-                        "date" => ":string :date",
-                    ],
-                ],
-            ],
-        ];
-
-
-        $matcher = new TraversingMatcher(new ValidatorLocator());
-        try {
-            $matcher->match($pattern, $data);
-            $this->fail();
-        } catch (FailReport $report) {
-
-            $this->assertFalse($report->getReason()->isKeyType());
-            $this->assertTrue($report->getReason()->isValueType());
-            $this->assertEquals([0, "events", 1], $report->getDataKeyChain());
-            $this->assertEquals(3, $report->getFailedPatternLevel());
-            $this->assertEquals([
-                "event" => ":string :min(1)",
-                "date" => ":string :date",
-            ], $report->getMismatchPattern());
-        }
-
-    }
-
-
 }
