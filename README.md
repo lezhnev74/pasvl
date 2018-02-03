@@ -22,7 +22,7 @@ composer require lezhnev74/pasvl
 ```php
 
 // import fully qualified class names to your namespace
-use PASVL\Traverser\TraversingMatcher;
+use PASVL\Traverser\VO\Traverser;
 use PASVL\ValidatorLocator\ValidatorLocator;
 
 
@@ -57,7 +57,7 @@ $pattern = [
             ],
         ];
 
-$traverser = new TraversingMatcher(new ValidatorLocator());
+$traverser = new Traverser(new ValidatorLocator());
 $traverser->match($pattern, $data); // returns void, throws Report on Fail
 ```
 
@@ -66,7 +66,7 @@ $traverser->match($pattern, $data); // returns void, throws Report on Fail
 ```php
 // import fully qualified class names to your namespace
 use PASVL\Traverser\FailReport;
-use PASVL\Traverser\TraversingMatcher;
+use PASVL\Traverser\VO\Traverser;
 use PASVL\ValidatorLocator\ValidatorLocator;
 
 
@@ -79,7 +79,7 @@ $pattern = [
 ];
 
 
-$traverser = new TraversingMatcher(new ValidatorLocator());
+$traverser = new Traverser(new ValidatorLocator());
 try {
     $traverser->match($pattern, $data); // returns void, throws Report on Fail   
 } catch (FailReport $report) {
@@ -90,18 +90,6 @@ try {
     echo $report->getReason()->isKeyType() ? "Invalid key found" : "";
     echo $report->getReason()->isKeyQuantityType() ? "Invalid key quantity found" : "";
     echo "\n";
-
-    echo "Data keys chain to invalid data: ";
-    if ($report->getFailedPatternLevel()) {
-        echo implode(" => ", $report->getDataKeyChain());
-        echo " => ";
-    }
-    echo $report->getMismatchDataKey() . "\n";
-    if ($report->getReason()->isValueType()) {
-        echo "Invalid value: ";
-        echo json_encode($report->getMismatchDataValue(), JSON_PRETTY_PRINT) . "\n";
-    }
-    echo "Mismatched pattern: " . json_encode($report->getMismatchPattern(), JSON_PRETTY_PRINT) . "\n";
 }
 ```
 
