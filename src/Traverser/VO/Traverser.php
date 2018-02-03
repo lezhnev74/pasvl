@@ -86,12 +86,15 @@ class Traverser
                 throw new DataNoMatching($dataKey, $dataValue, FailedReason::fromFailedKey());
             }
 
+
             // 2. Filter perspective pattern keys by validating data value against pattern's corresponding value
             $perspectivePatternKeys = $this->filterPerspectiveKeysByMatchingValues(
                 $perspectivePatternKeys,
                 $patterns,
                 $dataValue
             );
+
+
 
             if (!count($perspectivePatternKeys)) {
                 throw new DataNoMatching(

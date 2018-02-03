@@ -17,7 +17,11 @@ Highly inspired by abandoned package [ptrofimov/matchmaker](https://github.com/p
 composer require lezhnev74/pasvl
 ```
 
-## Example: Valid array
+## Examples
+
+Refer to files in `Examples` folder. 
+
+### Data matches the pattern
 
 ```php
 
@@ -61,7 +65,7 @@ $traverser = new Traverser(new ValidatorLocator());
 $traverser->match($pattern, $data); // returns void, throws Report on Fail
 ```
 
-## Example: Invalid array
+### Data does not match the pattern
 
 ```php
 // import fully qualified class names to your namespace
