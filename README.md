@@ -24,7 +24,6 @@ Refer to files in `Examples` folder.
 ### Data matches the pattern
 
 ```php
-
 // import fully qualified class names to your namespace
 use PASVL\Traverser\VO\Traverser;
 use PASVL\ValidatorLocator\ValidatorLocator;
@@ -88,33 +87,8 @@ try {
     $traverser->match($pattern, $data); // returns void, throws Report on Fail   
 } catch (FailReport $report) {
     echo "\n--- Array does not match a pattern ---\n";
-
-    echo "Reason: ";
-    echo $report->getReason()->isValueType() ? "Invalid value found" : "";
-    echo $report->getReason()->isKeyType() ? "Invalid key found" : "";
-    echo $report->getReason()->isKeyQuantityType() ? "Invalid key quantity found" : "";
-    echo "\n";
 }
 ```
-
-The output will be:
-```
---- Array does not match a pattern ---
-Reason: Invalid value found
-Data keys chain to invalid data: password
-Invalid value: "weak"
-Mismatched pattern: {
-    "password": ":string :min(6)"
-}
-```
-
-The report allows you to locate the problem location. It has following information:
-- exact key or value that failed validation (including a special case when keys failed quantity validation)
-- the pattern that was compared to
-- the level of mismatched data in case it is located deep inside the array
-- chain of data and pattern keys to show breadcrumbs down to mismatched data and pattern
-
-Notice: while it allows you to locate the level of mismatched data, it will not tell you the exact rule that failed. This is because each value is compared to multiple patterns and it is hard to say which one was supposed to be valid.
 
 ## Pattern 
 
