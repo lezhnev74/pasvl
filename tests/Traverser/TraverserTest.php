@@ -97,6 +97,36 @@ class TraverserTest extends TestCase
         return [
             [
                 [
+                    "Other" => [
+                        "rw",
+                        "move_into",
+                        "note",
+                        "owner",
+                        "priority",
+                        "owner",
+                    ],
+                    "sales" => [
+                        "rw",
+                    ],
+                ],
+                [
+
+                    'Other!' => [
+                        'rw',
+                        'move_into',
+                        'note',
+                        'owner',
+                        'priority',
+                        'owner',
+                    ],
+                    ':string :min(1)' => [
+                        'rw',
+                    ],
+
+                ],
+            ],
+            [
+                [
                     ["other" => ["a", "b"]],
                     ["sales" => ["a"]],
                 ],

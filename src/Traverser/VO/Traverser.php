@@ -68,6 +68,7 @@ class Traverser
      */
     protected function matchLevel(iterable $data, array $patterns)
     {
+
         // Optimization: analyze explicit keys first
         uksort($patterns, function ($key1, $key2) {
             return (int)(
@@ -91,6 +92,7 @@ class Traverser
                 $patterns,
                 $dataValue
             );
+
             if (!count($perspectivePatternKeys)) {
                 throw new DataNoMatching(
                     $dataKey,
@@ -221,8 +223,7 @@ class Traverser
             }
 
             return $patternMatched;
-        }
-        );
+        });
 
     }
 
