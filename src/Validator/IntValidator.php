@@ -9,8 +9,9 @@ namespace PASVL\Validator;
 
 class IntValidator extends NumberValidator
 {
-    public function __invoke($data): bool
+    public function __invoke($data, $nullable = false): bool
     {
-        return is_integer($data);
+        return is_integer($data) ||
+            ($nullable && $data == null);;
     }
 }

@@ -9,8 +9,10 @@ namespace PASVL\Validator;
 
 class FloatValidator extends NumberValidator
 {
-    public function __invoke($data): bool
+    public function __invoke($data, $nullable = false): bool
     {
-        return is_float($data);
+        return
+            is_float($data) ||
+            ($nullable && $data == null);
     }
 }

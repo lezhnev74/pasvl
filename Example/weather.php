@@ -23,13 +23,30 @@ $pattern = [
     "timezone" => ":string",
     "timezone_name" => ":string",
     "parent" => ":any",
-    "consolidated_weather" => ":any",
+    "consolidated_weather" => [
+        "*" => [
+            "id" => ":int",
+            "weather_state_name" => ":string(nullable)",
+            "weather_state_abbr" => ":string(nullable)",
+            "wind_direction_compass" => ":string(nullable)",
+            "created" => ":string(nullable) :date",
+            "applicable_date" => ":string(nullable)",
+            "min_temp" => ":float(nullable)",
+            "max_temp" => ":float(nullable)",
+            "the_temp" => ":float(nullable)",
+            "wind_speed" => ":float(nullable)",
+            "wind_direction" => ":float(nullable)",
+            "air_pressure" => ":float(nullable)",
+            "humidity" => ":int(nullable)",
+            "visibility" => ":float(nullable)",
+            "predictability" => ":int(nullable)",
+        ],
+    ],
     "sources" => ":any",
 ];
 
 $json = file_get_contents("https://www.metaweather.com/api/location/2122265/");
 $data = json_decode($json, true);
-
 
 
 $traverser = new \PASVL\Traverser\VO\Traverser(new \PASVL\ValidatorLocator\ValidatorLocator());

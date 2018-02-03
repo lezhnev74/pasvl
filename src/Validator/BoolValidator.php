@@ -9,9 +9,10 @@ namespace PASVL\Validator;
 
 class BoolValidator extends Validator
 {
-    public function __invoke($data): bool
+    public function __invoke($data, $nullable = false): bool
     {
-        return is_bool($data);
+        return is_bool($data) ||
+            ($nullable && $data == null);
     }
 
 }
