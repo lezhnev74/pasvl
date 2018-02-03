@@ -22,7 +22,12 @@ $pattern = [
     ":string :regex(#^sun_(rise|set)$#){2}" => ":string :date",
     "timezone" => ":string",
     "timezone_name" => ":string",
-    "parent" => ":any",
+    "parent" => [
+        "title" => ":string",
+        "location_type" => ":string",
+        "woeid" => ":int",
+        "latt_long" => ":string :regexp(#^\d+\.\d+,\d+\.\d+$#)",
+    ],
     "consolidated_weather" => [
         "*" => [
             "id" => ":int",
@@ -42,7 +47,14 @@ $pattern = [
             "predictability" => ":int(nullable)",
         ],
     ],
-    "sources" => ":any",
+    "sources" => [
+        "*" => [
+            "title" => ":string",
+            "slug" => ":string",
+            "url" => ":string :url",
+            "crawl_rate" => ":int",
+        ],
+    ],
 ];
 
 $json = file_get_contents("https://www.metaweather.com/api/location/2122265/");
