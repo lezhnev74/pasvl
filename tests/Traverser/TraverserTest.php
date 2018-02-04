@@ -83,13 +83,11 @@ class TraverserTest extends TestCase
 
     /**
      * @dataProvider dataProviderInvalid
-     * @throws FailReport
      */
     function test_matches_invalid_data($data, $pattern)
     {
-        $this->expectException(FailReport::class);
         $matcher = new Traverser(new ValidatorLocator());
-        $matcher->match($pattern, $data);
+        $this->assertFalse($matcher->check($pattern, $data));
     }
 
     function dataProviderValid()
@@ -313,8 +311,7 @@ class TraverserTest extends TestCase
     function test_matches_valid_data($data, $pattern)
     {
         $matcher = new Traverser(new ValidatorLocator());
-        $matcher->match($pattern, $data);
-        $this->addToAssertionCount(1);
+        $this->assertTrue($matcher->check($pattern, $data));
     }
 
     function test_it_handles_empty_array_case()
