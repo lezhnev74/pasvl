@@ -33,13 +33,13 @@ class Traverser
     }
 
     /**
-     * Initiate validation
+     * Validate data
      *
      * @throws FailReport
-     * @param $data
-     * @param $patterns
+     * @param array $patterns
+     * @param iterable $data
      */
-    public function match($patterns, $data)
+    public function match(array $patterns, iterable $data)
     {
         try {
             $this->matchLevel($data, $patterns);
@@ -57,6 +57,23 @@ class Traverser
                 $data_key_chain,
                 $pattern_key_chain
             );
+        }
+    }
+
+    /**
+     * Return bool, throw no exception
+     *
+     * @param array $patterns
+     * @param iterable $data
+     * @return bool
+     */
+    public function check(array $patterns, iterable $data): bool
+    {
+        try {
+            $this->match($patterns, $data);
+            return true;
+        } catch (FailReport $e) {
+            return false;
         }
     }
 
@@ -93,7 +110,6 @@ class Traverser
                 $patterns,
                 $dataValue
             );
-
 
 
             if (!count($perspectivePatternKeys)) {

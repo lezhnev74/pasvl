@@ -7,7 +7,7 @@
 # PASVL - PHP Array Structure Validation Library 
 
 The purpose of this library is to validate an existing (nested) array against a template and report a mismatch. 
-It has object-oriented extendable architecture to write and add custom validators.
+It has the object-oriented extendable architecture to write and add custom validators.
 
 
 Highly inspired by abandoned package [ptrofimov/matchmaker](https://github.com/ptrofimov/matchmaker). While the mentioned package was written in a functional way, current one embraces OO architecture in a sake of readability, maintainability, and extendability.  
@@ -21,78 +21,66 @@ composer require lezhnev74/pasvl
 
 Refer to files in `Examples` folder. 
 
-### Data matches the pattern
+### Example 1. Data does not match the pattern
 
 ```php
 // import fully qualified class names to your namespace
 use PASVL\Traverser\VO\Traverser;
 use PASVL\ValidatorLocator\ValidatorLocator;
 
-
-$data = [
-               [
-                   'type' => 'book',
-                   'title' => 'Geography book',
-                   'chapters' => [
-                       'eu' => ['title' => 'Europe', 'interesting' => true],
-                       'as' => ['title' => 'America', 'interesting' => false],
-                   ],
-               ],
-               [
-                   'type' => 'book',
-                   'title' => 'Foreign languages book',
-                   'chapters' => [
-                       'de' => ['title' => 'Deutsch'],
-                   ],
-               ],
-           ];
-
-$pattern = [
-            '*' => [
-                'type' => 'book',
-                'title' => ':string :contains(book)',
-                'chapters' => [
-                    ':string :length(2) {1,3}' => [
-                        'title' => ':string',
-                        'interesting?' => ':bool',
-                    ],
-                ],
-            ],
-        ];
+$data = ["password"=>"weak"];
+$pattern = ["password" => ":string :min(6)"];
 
 $traverser = new Traverser(new ValidatorLocator());
-$traverser->match($pattern, $data); // returns void, throws Report on Fail
+$result = $traverser->check($pattern, $data); // returns true 
 ```
 
-### Data does not match the pattern
+### Example 2. Data matches the pattern
 
 ```php
 // import fully qualified class names to your namespace
-use PASVL\Traverser\FailReport;
 use PASVL\Traverser\VO\Traverser;
 use PASVL\ValidatorLocator\ValidatorLocator;
 
 
 $data = [
-    "password"=>"weak"
+   [
+       'type' => 'book',
+       'title' => 'Geography book',
+       'chapters' => [
+           'eu' => ['title' => 'Europe', 'interesting' => true],
+           'as' => ['title' => 'America', 'interesting' => false],
+       ],
+   ],
+   [
+       'type' => 'book',
+       'title' => 'Foreign languages book',
+       'chapters' => [
+           'de' => ['title' => 'Deutsch'],
+       ],
+   ],
 ];
 
 $pattern = [
-    "password" => ":string :min(6)"
+    '*' => [
+        'type' => 'book',
+        'title' => ':string :contains(book)',
+        'chapters' => [
+            ':string :length(2) {1,3}' => [
+                'title' => ':string',
+                'interesting?' => ':bool',
+            ],
+        ],
+    ],
 ];
 
-
 $traverser = new Traverser(new ValidatorLocator());
-try {
-    $traverser->match($pattern, $data); // returns void, throws Report on Fail   
-} catch (FailReport $report) {
-    echo "\n--- Array does not match a pattern ---\n";
-}
+$result = $traverser->check($pattern, $data); // returns false
 ```
 
 ## Pattern 
 
-Any array consists of keys and values. A pattern can set expectations for both.
+An array consists of keys and values. A pattern can set expectations for both.
 
 ![](visual.jpg)
 
@@ -129,7 +117,7 @@ A pattern can be set in a few ways:
     ```
 
 #### Quantifier definition
-A quantifier is always optional in key's pattern, if none is set then default one is used - `!`. 
+A quantifier is always optional in key's pattern if none is set then default one is used - `!`. 
 
 Available quantifiers:
 - `!` - one key required (default)
@@ -140,9 +128,10 @@ Available quantifiers:
 
     
 ### Validator definition
-A pattern can have single main validator name and any number of sub-validators. Validator's definition must start with `:` and then the name is followed. Validators and sub-validators can have arguments: `:between(1,10)`, but empty argument list is not allowed. 
+A validator is a class which has single `__invoke($data)` method and optional methods acting as sub-validators.
+A pattern can have a single main validator name and any number of sub-validators. Validator's definition must start with `:` and then the name follows. 
 
-First validator in pattern is so-called "main validator", the rest are "sub-validators". Validator and sub-validator names follow the same rules as any [PHP label](http://www.php.net/manual/en/language.variables.basics.php):
+Validators and sub-validators can have arguments: `:between(1,10)` (but empty brackets are not allowed). Validator and sub-validator names follow the same rules as any [PHP label](http://www.php.net/manual/en/language.variables.basics.php):
 ```
 /^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/
 ```
@@ -158,20 +147,19 @@ $pattern = [
 ## Hints
 
 - PHP [casts](http://www.php.net/manual/en/language.types.array.php) "1" to 1 for array keys:
-```php
-$data = ["12"=>""];
-$pattern_invalid = [":string"=>""];
-$pattern_valid = [":int"=>""];
-```
+    ```php
+    $data = ["12"=>""];
+    $pattern_invalid = [":string"=>""];
+    $pattern_valid = [":int"=>""];
+    ```
 
 ## 🏆 Contributors
 - **Henry Combrinck**. Henry tested the library extensively on real data and found tricky bugs and edge cases. Awesome contribution to make the package valuable to the community.  
 
 ## License
-
 This project is licensed under the terms of the MIT license.
 
 ## TODO
 - Add validator classes
-- Injecting custom validators
-- What about supporting IoC?
+- Add more real-world examples
+- Improve README
