@@ -112,15 +112,15 @@ A pattern can be set in a few ways:
     In this case no other symbols are allowed except validator names and arguments. Invalid pattern: `:string name`.
 - **as validators list with quantifier:**
     ```php
-    //array can have any count (zero or more) string keys matching given regexp
-    $pattern = [":string :regexp(/Nic(o|ky)/) *"=>"Nico"]
+    //array can have any count (zero or more) string keys matching given regexp (frist_name or last_name)
+    $pattern = [":string :regexp(/(first|last)_name/) *"=>":string"]
     ```
 
 #### Quantifier definition
-A quantifier is always optional in key's pattern if none is set then default one is used - `!`. 
+A quantifier set expectations on keys. If none is set then default is assumed - `!`. 
 
 Available quantifiers:
-- `!` - one key required (default)
+- `!` - one key required (**default**)
 - `?` - optional key
 - `*` - any count of keys
 - `{2}` - strict keys count
@@ -143,6 +143,9 @@ $pattern = [
     ": string" => ":any"
 ];
 ``` 
+
+#### Validator lookup
+Built-in validator are found automatically. In case you want to use your own validator class, extend `ValidatorLocator` class and add your logic to locate validator classes. Refer to folder `src/Validator`.
 
 ## Hints
 
