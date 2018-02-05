@@ -32,7 +32,7 @@ $data = ["password"=>"weak"];
 $pattern = ["password" => ":string :min(6)"];
 
 $traverser = new Traverser(new ValidatorLocator());
-$result = $traverser->check($pattern, $data); // returns true 
+$result = $traverser->check($pattern, $data); // returns false 
 ```
 
 ### Example 2. Data matches the pattern
@@ -75,7 +75,7 @@ $pattern = [
 ];
 
 $traverser = new Traverser(new ValidatorLocator());
-$result = $traverser->check($pattern, $data); // returns false
+$result = $traverser->check($pattern, $data); // returns true
 ```
 
 ## Pattern 
