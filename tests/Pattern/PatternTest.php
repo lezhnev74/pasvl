@@ -80,6 +80,12 @@ class PatternTest extends TestCase
                 Quantifier::asRequired(),
             ],
             [
+                ":string :min(1) :max(255)",
+                new Validator("string"),
+                [new Validator("min", ['1']), new Validator("max", ['255'])],
+                Quantifier::asRequired(),
+            ],
+            [
                 ":any *",
                 new Validator("any"),
                 [],
@@ -119,7 +125,7 @@ class PatternTest extends TestCase
                 "CUSTOM STRING*",
             ],
             [
-                ":string :regex(/so(me|ar)/,(((12))",
+                ":string :regex(/so(me|ar\)/,(((12\))",
                 new Validator("string"),
                 [new Validator("regex", ['/so(me|ar)/', '(((12)']),],
                 Quantifier::asRequired(),
@@ -167,7 +173,16 @@ class PatternTest extends TestCase
 
     function test_sub_validator_can_have_parentheses_as_arguments()
     {
-        $pattern = new Pattern(":string :regexp(/[a-z](A|B)/)", null, true);
+        $pattern = new Pattern(":string :regexp(/[a-z](A|B\)/)", null, true);
         $this->assertTrue((new Validator("regexp", ['/[a-z](A|B)/']))->isEqual($pattern->getSubValidators()[0]));
+    }
+
+    /**
+     * @ref: https://github.com/lezhnev74/pasvl/issues/4
+     */
+    function test_it_supports_multiple_subvalidators() {
+        $patternStr = ':string :min(1) :max(255)';
+        $patternObj = new Pattern($patternStr);
+        $this->assertCount(2, $patternObj->getSubValidators());
     }
 }

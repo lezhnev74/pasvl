@@ -113,7 +113,8 @@ A pattern can be set in a few ways:
 - **as validators list with quantifier:**
     ```php
     //array can have any count (zero or more) string keys matching given regexp (frist_name or last_name)
-    $pattern = [":string :regexp(/(first|last)_name/) *"=>":string"]
+    //please note, that closing parenthesises within regex MUST be escaped in order to work correctly: 
+    $pattern = [":string :regexp(/(first|last\)_name/) *"=>":string"]
     ```
 
 #### Quantifier definition

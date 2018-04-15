@@ -88,7 +88,7 @@ class Pattern
     {
         $label_regexp_pattern        = "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*";
         $quantifier_regexp_pattern   = "(?'quantifier'(?'single_quantifier'[\*|\?|!])|(?'interval_quantifier'{(?'quantifier_min_boundary'\d+)(?'quantifier_max_boundary',\d*)?}))";
-        $validator_arguments_pattern = "(\((?'arguments'.+,?)+\))?";
+        $validator_arguments_pattern = "(\((?'arguments'.+?,?)(?<!\\\\)\))?";
         $full_validator              = "(?'validator':(?'name'$label_regexp_pattern)$validator_arguments_pattern)";
         $full_regexp_pattern         = "#$full_validator*?$quantifier_regexp_pattern?#";
 
@@ -155,10 +155,14 @@ class Pattern
     {
         $this->validators = array_values(
             array_map(function ($match) {
-                return new Validator(
-                    $match['name'],
+                $arguments = array_map(
+                    function ($argumentsString) {
+                        // remove escaped closing parenthesis
+                        return strtr($argumentsString, ['\)' => ')']);
+                    },
                     array_filter(explode(",", $match['arguments'] ?? ""), 'strlen')
                 );
+                return new Validator($match['name'], $arguments);
             }, array_filter($matches, function ($match) {
                 return isset($match['validator']) && strlen($match['validator']);
             }))
