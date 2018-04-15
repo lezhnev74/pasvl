@@ -86,6 +86,12 @@ class PatternTest extends TestCase
                 Quantifier::asRequired(),
             ],
             [
+                ":string :min(1,bravo,) :max(alpha,255)",
+                new Validator("string"),
+                [new Validator("min", ['1','bravo']), new Validator("max", ['alpha','255'])],
+                Quantifier::asRequired(),
+            ],
+            [
                 ":any *",
                 new Validator("any"),
                 [],
