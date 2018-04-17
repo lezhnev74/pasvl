@@ -1,6 +1,6 @@
 [![Latest Stable Version](https://poser.pugx.org/lezhnev74/pasvl/v/stable)](https://packagist.org/packages/lezhnev74/pasvl)
 [![Build Status](https://travis-ci.org/lezhnev74/pasvl.svg?branch=master)](https://travis-ci.org/lezhnev74/pasvl)
-[![Packagist](https://img.shields.io/packagist/dt/lezhnev74/pasvl.svg)](https://packagist.org/packages/lezhnev74/pasvl)
+[![Total Downloads](https://poser.pugx.org/lezhnev74/pasvl/downloads)](https://packagist.org/packages/lezhnev74/pasvl)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/lezhnev74/pasvl/master/LICENSE)
 
 
