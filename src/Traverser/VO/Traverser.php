@@ -183,7 +183,6 @@ class Traverser
     {
         $matchedPatterns = [];
         foreach ($patterns as $pattern_key => $pattern) {
-            //var_dump("validate========\n", $data, $pattern, $this->validator->match($data, $pattern));
             if ($this->validator->match($data, $pattern)) {
                 $matchedPatterns[$pattern_key] = $pattern;
             }

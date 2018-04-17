@@ -10,13 +10,21 @@ use PASVL\Validator\Validator;
 
 
 /**
- * Takes validator string name and locates the corresponding class
+ * Goal is to look for validator classes
  * @package PASVL
  */
 class ValidatorLocator
 {
     protected $cache = [];
 
+    /**
+     * Takes validator string name and locates the corresponding class
+     * There is a set of default validators located at "src/Validator" folder
+     *
+     * @param string $name
+     * @return Validator
+     * @throws \Exception
+     */
     public function getValidatorClass(string $name): Validator
     {
         if (!($validator = @$this->cache[$name])) {
@@ -40,7 +48,7 @@ class ValidatorLocator
 
     protected function locate(string $name): ?object
     {
-        // to be overridden somewhere
+        // to be overridden in your own ValidatorLocator implementation (if any)
         return null;
     }
 }
