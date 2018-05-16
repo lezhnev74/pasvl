@@ -27,7 +27,7 @@ class ValidatorLocator
      */
     public function getValidatorClass(string $name): Validator
     {
-        if (!($validator = @$this->cache[$name])) {
+        if (!array_key_exists($name, $this->cache)) {
             if (!($validator = $this->locate($name))) {
                 if (!($validator = $this->locateDefault($name))) {
                     throw new \Exception("Missed validator: " . $name);
