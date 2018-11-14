@@ -158,6 +158,7 @@ Built-in validator are found automatically. In case you want to use your own val
     ```
 
 ## 🏆 Contributors
+- **[Greg Corrigan](https://github.com/corrigang)**. Greg spotted a problem with nullable values reported as invalid.
 - **Henry Combrinck**. Henry tested the library extensively on real data and found tricky bugs and edge cases. Awesome contribution to make the package valuable to the community.
 - **[@Averor](https://github.com/Averor)**. Found a bug in parenthesis parsing.   
 
