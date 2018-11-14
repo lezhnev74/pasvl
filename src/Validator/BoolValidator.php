@@ -9,11 +9,15 @@ namespace PASVL\Validator;
 
 class BoolValidator extends Validator
 {
+    /** @var boolean */
+    protected $skipValidation;
+
     public function __invoke($data, string $nullable = "false"): bool
     {
         $nullable = $this->convertStringToBool($nullable);
+        $this->skipValidation = is_null($data) && $nullable;
 
-        return is_bool($data) || ($nullable && $data == null);
+        return $this->skipValidation || is_bool($data);
     }
 
 }

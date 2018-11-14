@@ -313,10 +313,12 @@ class TraverserTest extends TestCase
                 [
                     "object" => new \stdClass(),
                     "nullable_object" => null,
+                    "nullable_array" => null,
                 ],
                 [
                     "object" => ":object",
-                    "nullable_object" => ":object(true)",
+                    "nullable_object" => ":object(true) :instance(\stdClass)",
+                    "nullable_array" => ":array(nullable) :count(1)",
                 ],
             ],
             [

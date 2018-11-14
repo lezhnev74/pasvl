@@ -9,10 +9,14 @@ namespace PASVL\Validator;
 
 class IntValidator extends NumberValidator
 {
+    /** @var boolean */
+    protected $skipValidation;
+
     public function __invoke($data, string $nullable = "false"): bool
     {
         $nullable = $this->convertStringToBool($nullable);
+        $this->skipValidation = is_null($data) && $nullable;
 
-        return is_integer($data) || ($nullable && $data == null);
+        return $this->skipValidation || is_integer($data);
     }
 }
