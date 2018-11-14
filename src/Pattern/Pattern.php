@@ -140,7 +140,7 @@ class Pattern
             strlen($remaining_labels) &&
             $this->throw_on_invalid_pattern
         ) {
-            throw new InvalidPattern("Pattern has invalid labels: " . $remaining_labels);
+            throw new InvalidPattern("Pattern has invalid labels. Remaining labels: $remaining_labels");
         }
 
         return !strlen($remaining_labels);

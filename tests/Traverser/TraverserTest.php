@@ -319,6 +319,15 @@ class TraverserTest extends TestCase
                     "nullable_object" => ":object(true)",
                 ],
             ],
+            [
+                [
+                    "first_name" => "Sam",
+                    "last_name" => "Walberg",
+                ],
+                [
+                    ":string :regexp(/(first|last\)_name/) *" => ":string",
+                ],
+            ],
         ];
     }
 

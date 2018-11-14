@@ -114,7 +114,7 @@ A pattern can be set in a few ways:
     ```php
     //array can have any count (zero or more) string keys matching given regexp (frist_name or last_name)
     //please note, that closing parenthesises within regex MUST be escaped in order to work correctly: 
-    $pattern = [":string :regexp(/(first|last\)_name/\) *"=>":string"]
+    $pattern = [":string :regexp(#(first|last\)_name#) *"=>":string"]
     ```
 
 #### Quantifier definition
