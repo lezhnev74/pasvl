@@ -33,6 +33,7 @@ class Pattern
      * @param string|int $original_pattern
      * @param mixed $context
      * @param bool $throw_on_invalid_pattern
+     * @throws InvalidPattern
      */
     public function __construct($original_pattern, $context = null, $throw_on_invalid_pattern = false)
     {
@@ -110,7 +111,6 @@ class Pattern
         ) {
             throw new InvalidPattern("Direct name cannot be used along with * quantifier");
         }
-
     }
 
     /**
@@ -169,6 +169,9 @@ class Pattern
         );
     }
 
+    /**
+     * @param array $matches
+     */
     protected function fillDefaultValidatorFromRegexpMatches(array $matches)
     {
         foreach ($matches as $match) {
@@ -192,6 +195,7 @@ class Pattern
      * Fill internal value with parsed Quantifier object
      *
      * @param array $matches
+     * @throws InvalidPattern
      */
     function fillQuantifierFromRegexpMatches(array $matches): void
     {

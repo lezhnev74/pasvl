@@ -9,10 +9,12 @@ namespace PASVL\Validator;
 
 class ArrayValidator extends Validator
 {
-    public function __invoke($data, $nullable = false): bool
+    public function __invoke($data, string $nullable = "false"): bool
     {
-        return is_iterable($data) ||
-            ($nullable && $data == null);
+        $nullable = $this->convertStringToBool($nullable);
+
+        return is_iterable($data)
+               || ($nullable && $data == null);
     }
 
     public function count($data, $count): bool

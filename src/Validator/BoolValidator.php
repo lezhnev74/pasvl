@@ -9,10 +9,11 @@ namespace PASVL\Validator;
 
 class BoolValidator extends Validator
 {
-    public function __invoke($data, $nullable = false): bool
+    public function __invoke($data, string $nullable = "false"): bool
     {
-        return is_bool($data) ||
-            ($nullable && $data == null);
+        $nullable = $this->convertStringToBool($nullable);
+
+        return is_bool($data) || ($nullable && $data == null);
     }
 
 }

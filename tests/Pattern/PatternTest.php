@@ -145,6 +145,7 @@ class PatternTest extends TestCase
      * @param null $main_validator
      * @param array $subvalidators
      * @param null $quantifier
+     * @throws InvalidPattern
      */
     function test_pattern($pattern_string, $main_validator = null, $subvalidators = [], $quantifier = null)
     {

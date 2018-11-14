@@ -78,6 +78,14 @@ class TraverserTest extends TestCase
                 ],
 
             ],
+            [
+                [
+                    "nullObject" => null,
+                ],
+                [
+                    "nullObject" => ":object",
+                ],
+            ],
         ];
     }
 
@@ -301,7 +309,16 @@ class TraverserTest extends TestCase
                     "age" => ":int",
                 ],
             ],
-
+            [
+                [
+                    "object" => new \stdClass(),
+                    "nullable_object" => null,
+                ],
+                [
+                    "object" => ":object",
+                    "nullable_object" => ":object(true)",
+                ],
+            ],
         ];
     }
 
