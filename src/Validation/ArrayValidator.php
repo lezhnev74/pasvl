@@ -141,7 +141,10 @@ class ArrayValidator extends Validator
         if (isset($this->tokenizedPatterns[$pattern])) return $this->tokenizedPatterns[$pattern];
 
         try {
-            $operand = (new CompoundRuleParser())->parse((string)$pattern)[0];
+            $operands = (new CompoundRuleParser())->parse((string)$pattern);
+            if (!$operands) {
+                $operand = $operand = TokenSimpleOperand::make([TokenRule::make('exact', [''])]);
+            } else $operand = $operands[0];
         } catch (UnexpectedCharacter $e) {
             if ($e->pos === 0) {
                 // edge case, if unexpected character found in the first position, then treat this an the exact value

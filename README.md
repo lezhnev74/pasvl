@@ -7,6 +7,9 @@
 
 Think of a regular expression `[ab]+` which matches a string `abab`. Now imaging the same for arrays.
 
+The purpose of this library is to validate an existing (nested) array against a template and report a mismatch. 
+It has the object-oriented extendable architecture to write and add custom validators.
+
 ## Installation
 ```
 composer require lezhnev74/pasvl
@@ -137,6 +140,13 @@ To add new custom rules, follow these steps:
   ```php
   $builder = ValidatorBuilder::forArray($pattern)->withLocator(new MyLocator()); // set your new locator
   $validator = $builder->build();
+  ```
+## Hints
+- PHP casts "1" to 1 for array keys:
+  ```php
+  $data = ["12"=>""];
+  $pattern_invalid = [":string"=>""];
+  $pattern_valid = [":number :int"=>""];
   ```
 
 ## 🏆 Contributors
