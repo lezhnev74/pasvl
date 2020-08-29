@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  pasvl:
+    container_name: pasvl
+    build:
+      context: docker
+    init: true
+    volumes:
+      - .:/var/www

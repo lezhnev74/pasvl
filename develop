@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+#
+# ./develop
+#   This is a helper script that wraps the typical commands you will execute on the Docker container. It saves the developer
+#   from needing to explicitly run the commands through docker-compose. E.g: `docker-compose exec app php` becomes
+#
+#   See the comments in the script below for more detailed information.
+#
+
+# Create docker-compose command to run
+COMPOSE="docker-compose -f docker-compose.yml"
+
+# If we pass any arguments...
+if [ $# -gt 0 ];then
+    # If "composer" is used, pass-thru to "composer"
+    # inside a new container
+    if [ "$1" == "composer" ]; then
+        shift 1
+        $COMPOSE run --rm \
+            -w /var/www \
+            pasvl \
+            php -dmemory_limit=-1 /usr/local/bin/composer "$@"
+
+    # If "test" is used, run unit tests,
+    # pass-thru any extra arguments to phpunit
+    elif [ "$1" == "test" ]; then
+        shift 1
+        $COMPOSE run --rm \
+            -w /var/www \
+            pasvl \
+            ./vendor/phpunit/phpunit/phpunit "$@" --testdox
+
+    # If "debug" is used, run unit tests with xdebug enabled,
+    # pass-thru any extra arguments to phpunit
+    elif [ "$1" == "debug" ]; then
+        shift 1
+        $COMPOSE run --rm \
+            -w /var/www \
+            pasvl \
+            php -dxdebug.remote_autostart=1 ./vendor/phpunit/phpunit/phpunit "$@" --testdox
+
+    # If "php" is used, run php interpreter,
+    # pass-thru any extra arguments to php
+    elif [ "$1" == "php" ]; then
+        shift 1
+        $COMPOSE run --rm \
+            -w /var/www \
+            pasvl \
+            php "$@"
+
+    # Else, pass-thru args to docker-compose
+    else
+        $COMPOSE "$@"
+    fi
+
+else
+    $COMPOSE ps
+fi

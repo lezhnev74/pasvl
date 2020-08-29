@@ -14,37 +14,37 @@ include(__DIR__ . "/../vendor/autoload.php");
  */
 
 $pattern = [
-    "woeid" => ":int",
+    "woeid" => ":number :int",
     "title" => ":string",
     "location_type" => ":string",
-    "latt_long" => ":string :regexp(#^\d+\.\d+,\d+\.\d+$#)",
-    "time" => ":string :date",
-    ":string :regex(#^sun_(rise|set\)$#){2}" => ":string :date",
+    "latt_long" => ":string :regexp('^\d+\.\d+,\d+\.\d+$')",
+    "time" => ":string :regexp('\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}.{1,7}')",
+    ":string :regexp('^sun_(rise|set)$'){2}" => ":string :regexp('\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}.{1,7}')",
     "timezone" => ":string",
     "timezone_name" => ":string",
     "parent" => [
         "title" => ":string",
         "location_type" => ":string",
-        "woeid" => ":int",
-        "latt_long" => ":string :regexp(#^\d+\.\d+,\d+\.\d+$#)",
+        "woeid" => ":number :int",
+        "latt_long" => ":string :regexp('^\d+\.\d+,\d+\.\d+$')",
     ],
     "consolidated_weather" => [
         "*" => [
-            "id" => ":int",
-            "weather_state_name" => ":string(nullable)",
-            "weather_state_abbr" => ":string(nullable)",
-            "wind_direction_compass" => ":string(nullable)",
-            "created" => ":string(nullable) :date",
-            "applicable_date" => ":string(nullable)",
-            "min_temp" => ":float(nullable)",
-            "max_temp" => ":float(nullable)",
-            "the_temp" => ":float(nullable)",
-            "wind_speed" => ":float(nullable)",
-            "wind_direction" => ":float(nullable)",
-            "air_pressure" => ":float(nullable)",
-            "humidity" => ":int(nullable)",
-            "visibility" => ":float(nullable)",
-            "predictability" => ":int(nullable)",
+            "id" => ":number :int",
+            "weather_state_name" => ":string?",
+            "weather_state_abbr" => ":string?",
+            "wind_direction_compass" => ":string?",
+            "created" => ":string? :regexp('\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}.{1,7}')",
+            "applicable_date" => ":string?",
+            "min_temp" => ":number? :float",
+            "max_temp" => ":number? :float",
+            "the_temp" => ":number? :float",
+            "wind_speed" => ":number? :float",
+            "wind_direction" => ":number? :float",
+            "air_pressure" => ":number? :float",
+            "humidity" => ":number :int",
+            "visibility" => ":number? :float",
+            "predictability" => ":number :int",
         ],
     ],
     "sources" => [
@@ -52,7 +52,7 @@ $pattern = [
             "title" => ":string",
             "slug" => ":string",
             "url" => ":string :url",
-            "crawl_rate" => ":int",
+            "crawl_rate" => ":number :int",
         ],
     ],
 ];
@@ -61,16 +61,11 @@ $json = file_get_contents("https://www.metaweather.com/api/location/2122265/");
 $data = json_decode($json, true);
 
 
-$traverser = new \PASVL\Traverser\VO\Traverser(new \PASVL\ValidatorLocator\ValidatorLocator());
+$builder = \PASVL\Validation\ValidatorBuilder::forArray($pattern);
 try {
-    $traverser->match($pattern, $data); // returns void, throws Report on Fail
+    $builder->build()->validate($data);
     echo "Data was valid";
-} catch (\PASVL\Traverser\FailReport $report) {
+} catch (\PASVL\Validation\Problems\ArrayFailedValidation $report) {
     echo "\n--- Array does not match a pattern ---\n";
-
-    echo "Reason: ";
-    echo $report->getReason()->isValueType() ? "Invalid value found" : "";
-    echo $report->getReason()->isKeyType() ? "Invalid key found" : "";
-    echo $report->getReason()->isKeyQuantityType() ? "Invalid key quantity found" : "";
-    echo "\n";
+    echo $report->getMessage();
 }

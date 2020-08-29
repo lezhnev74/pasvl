@@ -3,159 +3,141 @@
 [![Total Downloads](https://poser.pugx.org/lezhnev74/pasvl/downloads)](https://packagist.org/packages/lezhnev74/pasvl)
 [![License](https://poser.pugx.org/lezhnev74/pasvl/license)](https://packagist.org/packages/lezhnev74/pasvl)
 
+# PASVL - PHP Array Structure Validation Library
 
-# PASVL - PHP Array Structure Validation Library 
-
-The purpose of this library is to validate an existing (nested) array against a template and report a mismatch. 
-It has the object-oriented extendable architecture to write and add custom validators.
-
-
-Highly inspired by abandoned package [ptrofimov/matchmaker](https://github.com/ptrofimov/matchmaker). While the mentioned package was written in a functional way, current one embraces OO architecture in a sake of readability, maintainability, and extendability.  
+Think of a regular expression `[ab]+` which matches a string `abab`. Now imaging the same for arrays.
 
 ## Installation
 ```
 composer require lezhnev74/pasvl
 ```
 
-## Examples
+## Example
 
-Refer to files in `Examples` folder. 
+Refer to files in `Example` folder.
 
-### Example 1. Data does not match the pattern
+## Usage
 
+### Array Validation
 ```php
-// import fully qualified class names to your namespace
-use PASVL\Traverser\VO\Traverser;
-use PASVL\ValidatorLocator\ValidatorLocator;
-
-$data = ["password"=>"weak"];
-$pattern = ["password" => ":string :min(6)"];
-
-$traverser = new Traverser(new ValidatorLocator());
-$result = $traverser->check($pattern, $data); // returns false 
-```
-
-### Example 2. Data matches the pattern
-
-```php
-// import fully qualified class names to your namespace
-use PASVL\Traverser\VO\Traverser;
-use PASVL\ValidatorLocator\ValidatorLocator;
-
-
-$data = [
-   [
-       'type' => 'book',
-       'title' => 'Geography book',
-       'chapters' => [
-           'eu' => ['title' => 'Europe', 'interesting' => true],
-           'as' => ['title' => 'America', 'interesting' => false],
-       ],
-   ],
-   [
-       'type' => 'book',
-       'title' => 'Foreign languages book',
-       'chapters' => [
-           'de' => ['title' => 'Deutsch'],
-       ],
-   ],
-];
-
 $pattern = [
     '*' => [
         'type' => 'book',
-        'title' => ':string :contains(book)',
+        'title' => ':string :contains("book")',
         'chapters' => [
-            ':string :length(2) {1,3}' => [
+            ':string :len(2) {1,3}' => [
                 'title' => ':string',
-                'interesting?' => ':bool',
+                ':exact("interesting") ?' => ':bool',
             ],
         ],
     ],
 ];
 
-$traverser = new Traverser(new ValidatorLocator());
-$result = $traverser->check($pattern, $data); // returns true
-```
-
-## Pattern 
-
-An array consists of keys and values. A pattern can set expectations for both.
-
-![](visual.jpg)
-
-A pattern consists of a 3 parts:
-- main validator: `:string`
-- optional sub-validators: `:min(2) :max(4)`
-- quantifier (for keys only): `{1,2}`
-
-Example: `:string :min(1) :max(4) {1,2}`.
-
-### Pattern definition
-
-A pattern can be set in a few ways:
-- **as an explicit key name:**
-    ```php
-    $pattern = ["name"=>"Nico"]
-    ```
-- **as an explicit optional key name:**
-    ```php
-    // array can have optional key "name"
-    $pattern = ["name?"=>"Nico"]
-    ```
-- **as validators list:**
-    ```php
-    //array can have any number of string keys of exactly 4 bytes long
-    // here "string" - main validator, "len" - sub-validator
-    $pattern = [":string :len(4)"=>"Nico"]
-    ```
-    In this case no other symbols are allowed except validator names and arguments. Invalid pattern: `:string name`.
-- **as validators list with quantifier:**
-    ```php
-    //array can have any count (zero or more) string keys matching given regexp (frist_name or last_name)
-    //please note, that closing parenthesises within regex MUST be escaped in order to work correctly: 
-    $pattern = [":string :regexp(#(first|last\)_name#) *"=>":string"]
-    ```
-
-#### Quantifier definition
-A quantifier set expectations on keys. If none is set then default is assumed - `!`. 
-
-Available quantifiers:
-- `!` - one key required (**default**)
-- `?` - optional key
-- `*` - any count of keys
-- `{2}` - strict keys count
-- `{2,4}` - range of keys count
-
-    
-### Validator definition
-A validator is a class which has single `__invoke($data)` method and optional methods acting as sub-validators.
-A pattern can have a single main validator name and any number of sub-validators. Validator's definition must start with `:` and then the name follows. 
-
-Validators and sub-validators can have arguments: `:between(1,10)` (but empty brackets are not allowed). Validator and sub-validator names follow the same rules as any [PHP label](http://www.php.net/manual/en/language.variables.basics.php):
-```
-/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/
-```
-
-If given pattern does not match the above description, then it is used as an implicit value:
-```php
-// This pattern matches only if data has key ": string"
-$pattern = [
-    ": string" => ":any"
+$data = [
+    [
+        'type' => 'book',
+        'title' => 'Geography book',
+        'chapters' => [
+            'eu' => ['title' => 'Europe', 'interesting' => true],
+            'as' => ['title' => 'America', 'interesting' => false],
+        ],
+    ],
+    [
+        'type' => 'book',
+        'title' => 'Foreign languages book',
+        'chapters' => [
+            'de' => ['title' => 'Deutsch'],
+        ],
+    ],
 ];
-``` 
 
-#### Validator lookup
-Built-in validator are found automatically. In case you want to use your own validator class, extend `ValidatorLocator` class and add your logic to locate validator classes. Refer to folder `src/Validator`.
+$builder = \PASVL\Validation\ValidatorBuilder::forArray($pattern);
+$validator = $builder->build();
+try {
+    $validator->validate($data); // the array is valid
+} catch (ArrayFailedValidation $e) {
+    echo "failed: " . $e->getMessage() . "\n";
+}
+```
 
-## Hints
+### Optional String Validation
+```php
+$pattern = ":string :regexp('^[ab]+$')";
+$builder = \PASVL\Validation\ValidatorBuilder::forString($pattern);
+$validator = $builder->build();
+$validator->validate("abab"); // the string is valid
+$validator->validate("abc"); // throws RuleFailed exception with the message: "string does not match regular expression ^[ab]+$"
+```
 
-- PHP [casts](http://www.php.net/manual/en/language.types.array.php) "1" to 1 for array keys:
-    ```php
-    $data = ["12"=>""];
-    $pattern_invalid = [":string"=>""];
-    $pattern_valid = [":int"=>""];
-    ```
+## Validation Language
+This package supports a special dialect for validation specification.
+It looks like this: `:string? :regexp('^[ab]+$') {1,2}`
+
+![](pasvl.jpg)
+
+#### Short language reference:
+- **Rule Name**
+  Specify zero or one Rule Name to apply to the data. Optinal postfix `?` allows data to be `null`.
+  Refer to the set of built-in rules in `src/Validation/Rules/Library`. For custom rules read below under `Custom Rules`.
+  For example, `:string?` describes strings and `null`.  
+- **Sub-Rule Name**
+  Specify zero or more Sub-Rule Names to apply to the data AFTER the Rule is applied. Sub Rules are extra methods of the main Rule.
+  For example, `:number :float` describes floats.
+- **Quantifier**
+  Specify quantity expectations for data keys. If none is set then default is assumed - !.
+  Available quantifiers:                       
+  - `!` - one key required (default)
+  - `?` - optional key
+  - `*` - any count of keys
+  - `{2}` - strict keys count
+  - `{2,4}` - range of keys count
+  
+  For example:
+  ```php
+    $pattern = [":string *" => ":number"];
+    // the above pattern matches data:
+    $data = ["june"=>10, "aug"=>"11"];
+  ```
+
+#### Pattern Definitions
+- as exact value
+  ```php
+  $pattern = ["name"=>":any"]; // here the key is the exact value
+  $pattern = ["name?"=>":any"]; // here the key is the exact value, can be absent as well
+  $pattern = [":exact('name')"=>":any"]; // this is the same
+  ```
+- as nullable rule
+  ```php
+  $pattern = ["name"=>":string?"]; // the value must be a string or null
+  ```
+- as rule with subrules
+  ```php
+  $pattern = ["name"=>":string :regexp('\d*')"]; // the value must be a string which contains only digits
+  ```
+- as rule with quantifiers
+  ```php
+  $pattern = [":string {2}"=>":any"]; // data must have exactly two string keys
+  ```
+
+#### Compound Definitions
+This package supports combinations of rules, expressed in a natural language.
+Examples:
+- `:string or :number`
+- `:string and :number`
+- `(:string and :number) or :array`
+
+There are two combination operators: `and`, `or`. `and` operator has precedence. Both are left-associative. 
+
+## Custom Rules
+By default, the system uses only the built-in rules. However you can extend them with your own implementations.
+To add new custom rules, follow these steps:
+- implement your new rule as a class and extend it from `\PASVL\Validation\Rules\Rule`
+- implement a new rule locator by extending a class `\PASVL\Validation\Rules\RuleLocator`
+- configure your validator like this:
+  ```php
+  $builder = ValidatorBuilder::forArray($pattern)->withLocator(new MyLocator()); // set your new locator
+  $validator = $builder->build();
+  ```
 
 ## 🏆 Contributors
 - **[Greg Corrigan](https://github.com/corrigang)**. Greg spotted a problem with nullable values reported as invalid.
@@ -165,7 +147,3 @@ Built-in validator are found automatically. In case you want to use your own val
 ## License
 This project is licensed under the terms of the MIT license.
 
-## TODO
-- Add validator classes
-- Add more real-world examples
-- Improve README
