@@ -76,7 +76,7 @@ $validator->validate("abc"); // throws RuleFailed exception with the message: "s
 
 ## Validation Language
 This package supports a special dialect for validation specification.
-It looks like this: `:string? :regexp('^[ab]+$') {1,2}`
+It looks like this:
 
 ![](pasvl.jpg)
 
@@ -89,7 +89,7 @@ It looks like this: `:string? :regexp('^[ab]+$') {1,2}`
   Specify zero or more Sub-Rule Names to apply to the data AFTER the Rule is applied. Sub Rules are extra methods of the main Rule.
   For example, `:number :float` describes floats.
 - **Quantifier**
-  Specify quantity expectations for data keys. If none is set then default is assumed - !.
+  Specify quantity expectations for data keys. If none is set then default is assumed - `!`.
   Available quantifiers:                       
   - `!` - one key required (default)
   - `?` - optional key
@@ -101,27 +101,27 @@ It looks like this: `:string? :regexp('^[ab]+$') {1,2}`
   ```php
     $pattern = [":string *" => ":number"];
     // the above pattern matches data:
-    $data = ["june"=>10, "aug"=>"11"];
+    $data = ["june"=>10, "aug" => "11"];
   ```
 
 #### Pattern Definitions
 - as exact value
   ```php
-  $pattern = ["name"=>":any"]; // here the key is the exact value
-  $pattern = ["name?"=>":any"]; // here the key is the exact value, can be absent as well
-  $pattern = [":exact('name')"=>":any"]; // this is the same
+  $pattern = ["name" => ":any"]; // here the key is the exact value
+  $pattern = ["name?" => ":any"]; // here the key is the exact value, can be absent as well
+  $pattern = [":exact('name')" => ":any"]; // this is the same
   ```
 - as nullable rule
   ```php
-  $pattern = ["name"=>":string?"]; // the value must be a string or null
+  $pattern = ["name" => ":string?"]; // the value must be a string or null
   ```
 - as rule with subrules
   ```php
-  $pattern = ["name"=>":string :regexp('\d*')"]; // the value must be a string which contains only digits
+  $pattern = ["name" => ":string :regexp('\d*')"]; // the value must be a string which contains only digits
   ```
 - as rule with quantifiers
   ```php
-  $pattern = [":string {2}"=>":any"]; // data must have exactly two string keys
+  $pattern = [":string {2}" => ":any"]; // data must have exactly two string keys
   ```
 
 #### Compound Definitions
@@ -131,7 +131,9 @@ Examples:
 - `:string and :number`
 - `(:string and :number) or :array`
 
-There are two combination operators: `and`, `or`. `and` operator has precedence. Both are left-associative. 
+There are two combination operators: `and`, `or`. 
+`and` operator has precedence. 
+Both are left-associative. 
 
 ## Custom Rules
 By default, the system uses only the built-in rules. However you can extend them with your own implementations.
@@ -146,9 +148,9 @@ To add new custom rules, follow these steps:
 ## Hints
 - PHP casts "1" to 1 for array keys:
   ```php
-  $data = ["12"=>""];
-  $pattern_invalid = [":string"=>""];
-  $pattern_valid = [":number :int"=>""];
+  $data = ["12" => ""];
+  $pattern_invalid = [":string" => ""];
+  $pattern_valid = [":number :int" => ""];
   ```
 
 ## 🏆 Contributors

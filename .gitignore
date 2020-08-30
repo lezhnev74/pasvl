@@ -5,3 +5,4 @@ composer.phar
 .qa-report.txt
 /storage
 .phpunit*
+composer.lock
