@@ -10,7 +10,7 @@ echo "[PRE-COMMIT] Started..."
 PHPCS_BIN="./develop php ./vendor/bin/phpcs"
 PHPCS_LOG=./.qa-report.txt
 PHPCBF_BIN="./develop php ./vendor/bin/phpcbf"
-UNUSED_COMPOSER="./develop composer unused --no-progress --no-cache"
+UNUSED_COMPOSER="./develop php composer-unused.phar --no-progress --no-cache"
 
 #########################
 #                       #

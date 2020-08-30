@@ -15,8 +15,7 @@ return [
     // Note that the **only** effect of choosing `'5.6'` is to infer
     // that functions removed in php 7.0 exist.
     // (See `backward_compatibility_checks` for additional options)
-    // TODO: Set this.
-    'target_php_version' => null,
+    'target_php_version' => '7.1',
 
     // A list of directories that should be parsed for class and
     // method information. After excluding the directories
@@ -28,7 +27,7 @@ return [
     'directory_list' => [
         'src',
         'tests',
-        'vendor'
+        'vendor',
     ],
 
     // A regex used to match every file name that you want to

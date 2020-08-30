@@ -7,3 +7,5 @@ docker-compose.yml export-ignore
 pasvl.jpg export-ignore
 phpcs.xml export-ignore
 phpunit.xml export-ignore
+composer-unused.phar export-ignore
+.phan export-ignore
