@@ -16,6 +16,9 @@ class StringValidatorTest extends TestCase
     public function data(): array
     {
         return [
+            // Unicode
+            ['Строка', ':string', self::EXPECT_PASS],
+            ['Строка', ':string("Строка")', self::EXPECT_PASS],
             // edge case: the exact matching
             ['exact', 'exact', self::EXPECT_PASS],
             ['not exact', 'exact', self::EXPECT_FAIL],
