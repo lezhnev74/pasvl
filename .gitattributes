@@ -9,3 +9,4 @@ phpcs.xml export-ignore
 phpunit.xml export-ignore
 composer-unused.phar export-ignore
 .phan export-ignore
+phan.phar export-ignore
