@@ -2,3 +2,6 @@ composer.phar
 /vendor/
 .idea/
 /notes
+.qa-report.txt
+/storage
+.phpunit*

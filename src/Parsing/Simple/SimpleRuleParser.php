@@ -1,6 +1,6 @@
 <?php
-declare(strict_types=1);
 
+declare(strict_types=1);
 
 namespace PASVL\Parsing\Simple;
 
@@ -42,14 +42,14 @@ class SimpleRuleParser extends Parser
                     $token = $this->buildRuleToken(self::TOKEN_RULE);
                     $this->state = self::STATE_SUB_RULE;
                     return $token;
-                } catch (NotLexeme|Eof $e) {
+                } catch (NotLexeme | Eof $e) {
                     $this->state = self::STATE_SUB_RULE;
                     return $this->getNextToken();
                 }
             case self::STATE_SUB_RULE:
                 try {
                     return $this->buildRuleToken(self::TOKEN_SUBRULE);
-                } catch (NotLexeme|Eof $e) {
+                } catch (NotLexeme | Eof $e) {
                     $this->state = self::STATE_QUANTIFIER;
                     return $this->getNextToken();
                 }
@@ -58,7 +58,7 @@ class SimpleRuleParser extends Parser
                     $token = $this->buildQuantifierToken();
                     $this->state = self::STATE_FINISH;
                     return $token;
-                } catch (NotLexeme|Eof $e) {
+                } catch (NotLexeme | Eof $e) {
                     $this->state = self::STATE_FINISH;
                     return $this->getNextToken();
                 }
@@ -101,7 +101,6 @@ class SimpleRuleParser extends Parser
             }
         }
 
-
         $token = call_user_func([$tokenType, 'make'], $idLexeme, []);
 
         // 2. read optional Arguments lexeme
@@ -116,13 +115,15 @@ class SimpleRuleParser extends Parser
 
         $expectArgument = true;
 
-        while ([$matchedPattern, $lexeme] = $this->expectAny([
+        while (
+            [$matchedPattern, $lexeme] = $this->expectAny([
             "\)",
             ",",
             '"',
             "'",
             self::PATTERN_NUMBER,
-        ])) {
+            ])
+        ) {
             switch ($matchedPattern) {
                 case "\)":
                     if ($expectArgument) $this->fail();

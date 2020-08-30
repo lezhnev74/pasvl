@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace PASVL\Validation\Rules\Library;
-
 
 use PASVL\Validation\Rules\Problems\RuleFailed;
 use PASVL\Validation\Rules\Rule;

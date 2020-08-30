@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace PASVL\Parsing\Compound;
-
 
 use PASVL\Parsing\Compound\Tokens\TokenCompoundOperand;
 use PASVL\Parsing\Compound\Tokens\TokenOperator;
@@ -29,7 +28,6 @@ class CompoundRuleParser extends Parser
         $tokens = parent::parse($text, $strategy);
         return count($tokens) > 1 ? [TokenCompoundOperand::make($tokens)] : $tokens;
     }
-
 
     protected function getNextToken()
     {
@@ -77,16 +75,7 @@ class CompoundRuleParser extends Parser
     {
         $token = null;
         $this->skipSpaces();
-
-        /*try {
-            $mode = "compound"; // expect compound rule like "(a or b)"
-            $this->expect("\(");
-        } catch (UnexpectedCharacter $e) {
-            $mode = "simple"; // expect simple rule like ":string :min(1)"
-        }*/
-
-        $this->skipSpaces();
-        switch ($this->select([
+        $nextSymbol = $this->select([
             "\(", // compound start
             ":",  // simple rule start
             // quantifiers start:
@@ -95,7 +84,8 @@ class CompoundRuleParser extends Parser
             '\*',
             '\?',
             '{',
-        ])) {
+        ]);
+        switch ($nextSymbol) {
             case ":":
             case "\+":
             case "!":
@@ -113,12 +103,10 @@ class CompoundRuleParser extends Parser
                 $tokens = $p->parse($this->remainder(), CompoundRuleParser::STRATEGY_ALLOW_POSTFIX);
                 $token = count($tokens) > 1 ? TokenCompoundOperand::make($tokens) : $tokens[0];
                 $this->move($p->pos);
-
                 $this->skipSpaces();
                 $this->expect("\)");
                 break;
         }
-        $this->skipSpaces();
 
         return $token;
     }

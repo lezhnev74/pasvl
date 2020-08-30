@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace PASVL\Parsing\Compound\Tokens;
-
 
 class TokenSimpleOperand implements Operand
 {
@@ -14,7 +13,7 @@ class TokenSimpleOperand implements Operand
 
     public static function make(array $tokens): self
     {
-        return new static($tokens);
+        return new self($tokens);
     }
 
     public function equals($other): bool

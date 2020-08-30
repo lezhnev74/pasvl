@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PASVL\Validation\Matcher;
@@ -21,7 +22,6 @@ class Result
         $this->value = $value;
         $this->causeException = $causeException;
     }
-
 
     public static function passed(): self { return new self(true, null); }
 

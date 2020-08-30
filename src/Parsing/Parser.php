@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace PASVL\Parsing;
-
 
 use PASVL\Parsing\Problems\Eof;
 use PASVL\Parsing\Problems\NonEmptyPostfix;
@@ -48,7 +47,6 @@ abstract class Parser
                 $tokens[] = $this->getNextToken();
             }
         } catch (Eof $e) {
-
         } catch (NonEmptyPostfix $e) {
             // Sometimes we want to parse until possible, and return what was parsed
             if ($this->strategy & self::STRATEGY_STRICT) throw $e;
@@ -140,7 +138,6 @@ abstract class Parser
     /** Read next $n symbols, if less symbols are available, then return everything from the cur pos to the end of text */
     protected function nextSymbols(int $n): string { return substr($this->remainder(), 0, $n); }
 
-
     protected function move(int $chars = 1): void
     {
         $this->pos += $chars;
@@ -187,6 +184,7 @@ abstract class Parser
         return substr($this->text, $this->pos);
     }
 
+    /** @throws UnexpectedCharacter */
     protected function fail(string $message = ""): void
     {
         throw new UnexpectedCharacter($this->pos, $this->remainder(), $this->text);

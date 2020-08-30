@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PASVL\Validation\Matcher;
@@ -33,7 +34,6 @@ class TokensMatcher
         $this->tokens = $tokens;
         $this->rulesLocator = $rulesLocator;
     }
-
 
     /**
      * Test if the given $input can be described with the given tokens

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PASVL\Tests\Parsing\Compound\Tokens;
@@ -16,5 +17,4 @@ class TokenSimpleOperandTest extends TestCase
         $this->assertFalse($op->equals(9));
         $this->assertEquals('string', $op->tokens()[0]->name());
     }
-
 }

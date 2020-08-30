@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace PASVL\Parsing\Compound\Tokens;
-
 
 class TokenCompoundOperand implements Operand
 {
@@ -15,7 +14,6 @@ class TokenCompoundOperand implements Operand
         $this->tokens = $tokens;
     }
 
-
     public static function make(array $tokens): self
     {
         // normalize
@@ -23,7 +21,7 @@ class TokenCompoundOperand implements Operand
             return $tokens[0];
         }
 
-        return new static($tokens);
+        return new self($tokens);
     }
 
     public function tokens(): array

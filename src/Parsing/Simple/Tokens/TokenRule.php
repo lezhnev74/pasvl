@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace PASVL\Parsing\Simple\Tokens;
-
 
 class TokenRule
 {
@@ -12,7 +11,7 @@ class TokenRule
     /** @var array */
     protected $arguments;
 
-    private function __construct(string $name, array $arguments)
+    final private function __construct(string $name, array $arguments)
     {
         $this->name = $name;
         $this->arguments = $arguments;

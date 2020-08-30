@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PASVL\Validation\Rules;
@@ -18,6 +19,6 @@ class RuleLocator
 
     private function makeRule(string $fqcn): Rule
     {
-        return new $fqcn;
+        return new $fqcn();
     }
 }

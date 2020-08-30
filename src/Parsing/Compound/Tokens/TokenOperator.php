@@ -1,9 +1,8 @@
 <?php
+
 declare(strict_types=1);
 
-
 namespace PASVL\Parsing\Compound\Tokens;
-
 
 class TokenOperator
 {
@@ -24,7 +23,7 @@ class TokenOperator
 
     public static function make(int $o): self
     {
-        return new static($o);
+        return new self($o);
     }
 
     public function isOr(): bool

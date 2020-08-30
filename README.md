@@ -10,6 +10,8 @@ Think of a regular expression `[ab]+` which matches a string `abab`. Now imaging
 The purpose of this library is to validate an existing (nested) array against a template and report a mismatch. 
 It has the object-oriented extendable architecture to write and add custom validators.
 
+**Note to current users**: this version is not backwards compatible with the previous 0.5.6. 
+
 ## Installation
 ```
 composer require lezhnev74/pasvl

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PASVL\Validation;
@@ -30,7 +31,6 @@ class StringValidator extends Validator
             $this->tokenizedPattern = (new CompoundRuleParser())->parse($pattern)[0];
         }
     }
-
 
     public function validate($data): void
     {

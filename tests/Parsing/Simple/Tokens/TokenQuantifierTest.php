@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PASVL\Tests\Parsing\Simple\Tokens;
@@ -8,7 +9,8 @@ use PHPUnit\Framework\TestCase;
 
 class TokenQuantifierTest extends TestCase
 {
-    public function testCreation(): void {
+    public function testCreation(): void
+    {
         $token = TokenQuantifier::make(0, 1);
 
         $this->assertEquals(0, $token->min());

@@ -28,7 +28,6 @@ class MyLocator extends RuleLocator
             throw $e;
         }
     }
-
 }
 
 // Validate data:

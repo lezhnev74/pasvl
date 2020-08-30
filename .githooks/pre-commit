@@ -1,0 +1,76 @@
+#!/bin/sh
+
+echo "[PRE-COMMIT] Started..."
+
+#########################
+#                       #
+#     Initializing      #
+#                       #
+#########################
+PHPCS_BIN="./develop php ./vendor/bin/phpcs"
+PHPCS_LOG=./.qa-report.txt
+PHPCBF_BIN="./develop php ./vendor/bin/phpcbf"
+UNUSED_COMPOSER="./develop composer unused --no-progress --no-cache"
+
+#########################
+#                       #
+#       Starting        #
+#                       #
+#########################
+
+# CHECK COMPOSER
+${UNUSED_COMPOSER}
+if [ $? != 0 ]
+    then
+        echo "[PRE-COMMIT] Composer has unused deps"
+        exit 1
+    fi
+
+
+# All files in staging area (no deletions)
+
+PROJECT=$(git rev-parse --show-toplevel)
+FILES=$(git diff --cached --name-only --diff-filter=ACMR HEAD | grep .php)
+
+if [ "$FILES" != "" ]
+then
+    # Coding Standards
+
+    echo "[PRE-COMMIT] Checking PHPCS..."
+
+    # You can change your PHPCS command here
+    ${PHPCS_BIN} &> /dev/null
+
+    if [ $? != 0 ]
+    then
+        echo "[PRE-COMMIT] Coding standards errors have been detected."
+        echo "[PRE-COMMIT] Running PHP Code Beautifier and Fixer..."
+
+        # Attempt to fix issues automatically
+        ${PHPCBF_BIN}  &> /dev/null
+
+        echo "[PRE-COMMIT] Checking PHPCS again..."
+
+        # Check again if all issues are resolved
+        ${PHPCS_BIN} --report-file=${PHPCS_LOG}
+
+        if [ $? != 0 ]
+        then
+            echo "[PRE-COMMIT] PHP Code Beautifier and Fixer wasn't able to solve all problems."
+            echo "[PRE-COMMIT] See log at ${PHPCS_LOG}"
+            exit 1
+        fi
+
+        echo "[PRE-COMMIT] All errors are fixed automatically."
+
+        # stage and commit any changed files
+        STAGED_FILES=$(git diff --name-only --diff-filter=ACMR HEAD)
+        git add ${STAGED_FILES}
+    else
+        echo "[PRE-COMMIT] No errors found."
+    fi
+else
+    echo "[PRE-COMMIT] No files changed."
+fi
+
+exit $?

@@ -1,0 +1,9 @@
+tests/ export-ignore
+Example/ export-ignore
+docker/ export-ignore
+develop export-ignore
+docker-compose.yml export-ignore
+.travis.yml export-ignore
+pasvl.jpg export-ignore
+phpcs.xml export-ignore
+phpunit.xml export-ignore
