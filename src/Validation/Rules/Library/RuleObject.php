@@ -18,10 +18,24 @@ class RuleObject extends Rule
     {
         if (!count($args)) throw new RuleFailed("Subrule [%s] expects one argument", __METHOD__);
         $fqcn = $args[0];
-        if ($this->value instanceof $fqcn) {
+        if (!$this->value instanceof $fqcn) {
             throw new RuleFailed(
                 sprintf("Object of type [%s] is not an instance of [%s]", gettype($this->value), $fqcn)
             );
+        }
+    }
+
+    public function propertyExists(string $propertyName): void
+    {
+        if (!property_exists($this->value, $propertyName)) {
+            throw new RuleFailed(sprintf("object must have property %s", $propertyName));
+        }
+    }
+
+    public function methodExists(string $propertyName): void
+    {
+        if (!method_exists($this->value, $propertyName)) {
+            throw new RuleFailed(sprintf("object must have property %s", $propertyName));
         }
     }
 }

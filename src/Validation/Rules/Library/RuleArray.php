@@ -24,4 +24,31 @@ class RuleArray extends Rule
             );
         }
     }
+
+    public function keys(...$args): void
+    {
+        if (array_keys($this->value) !== $args) {
+            throw new RuleFailed(sprintf("array must have keys [%s]", implode(",", $args)));
+        }
+    }
+
+    public function min(int $min): void
+    {
+        if (count($this->value) < $min) {
+            throw new RuleFailed(sprintf("array must have at least %d items", $min));
+        }
+    }
+
+    public function max(int $max): void
+    {
+        if (count($this->value) > $max) {
+            throw new RuleFailed(sprintf("array must have no more than %d items", $max));
+        }
+    }
+
+    public function between(int $min, int $max): void
+    {
+        $this->min($min);
+        $this->max($max);
+    }
 }

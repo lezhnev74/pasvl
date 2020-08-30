@@ -22,7 +22,7 @@ class RuleNumber extends Rule
         }
     }
 
-    public function max(int $x): void
+    public function max($x): void
     {
         if ($this->value > $x) throw new RuleFailed(sprintf("the number is greater than %d", $x));
     }
@@ -34,10 +34,34 @@ class RuleNumber extends Rule
 
     public function float(): void
     {
-        if (!is_float($this->value)) throw new RuleFailed("the number must be float");
+        if (!is_float($this->value) && !is_int($this->value)) throw new RuleFailed("the number must be float");
     }
 
-    public function min(int $x): void
+    public function positive(): void
+    {
+        if ($this->value < 0) throw new RuleFailed("the number must be positive");
+    }
+
+    public function in(...$args): void
+    {
+        if (!in_array($this->value, $args)) {
+            throw new RuleFailed(sprintf("the number must within: %s", implode(',', $args)));
+        }
+    }
+
+    public function inStrict(...$args): void
+    {
+        if (!in_array($this->value, $args, true)) {
+            throw new RuleFailed(sprintf("the number must within: %s", implode(',', $args)));
+        }
+    }
+
+    public function negative(): void
+    {
+        if ($this->value >= 0) throw new RuleFailed("the number must be negative");
+    }
+
+    public function min($x): void
     {
         if ($this->value < $x) throw new RuleFailed(sprintf("the number is less than %d", $x));
     }

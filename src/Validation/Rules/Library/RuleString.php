@@ -24,10 +24,47 @@ class RuleString extends Rule
         }
     }
 
+    public function json(): void
+    {
+        // must have ext-json enabled
+        json_decode($this->value);
+        if (json_last_error()) {
+            throw new RuleFailed(sprintf("the string is not valid JSON: [%s]", $this->value));
+        }
+    }
+
+    public function email(): void
+    {
+        if (filter_var($this->value, FILTER_VALIDATE_EMAIL) === false) {
+            throw new RuleFailed(sprintf("the string is not valid email: [%s]", $this->value));
+        }
+    }
+
     public function contains(string $substring): void
     {
         if (mb_strstr($this->value, $substring) === false) {
             throw new RuleFailed(sprintf("the substring [%s] not found in string [%s]", $substring, $this->value));
+        }
+    }
+
+    public function starts(string $substring): void
+    {
+        if (mb_substr($this->value, 0, strlen($substring)) !== $substring) {
+            throw new RuleFailed(sprintf("string [%s] does not start with [%s]", $this->value, $substring));
+        }
+    }
+
+    public function in(...$args): void
+    {
+        if (!in_array($this->value, $args)) {
+            throw new RuleFailed(sprintf("string [%s] must be one of [%s]", $this->value, implode(',', $args)));
+        }
+    }
+
+    public function ends(string $substring): void
+    {
+        if (mb_substr($this->value, -strlen($substring)) !== $substring) {
+            throw new RuleFailed(sprintf("string [%s] does not end with [%s]", $this->value, $substring));
         }
     }
 

@@ -30,7 +30,7 @@ class ArrayValidatorTest extends TestCase
             [['12', []], ['*' => ':string and :number or :array'], self::EXPECT_PASS],
             [['12', []], ['*' => ':string and (:number or :array)'], self::EXPECT_FAIL],
             [['name', 12], ['*' => ':string or (:number and :number :int)'], self::EXPECT_PASS],
-            [['name', 12], ['*' => ':string or (:number and :number :float)'], self::EXPECT_FAIL],
+            [['name', .12], ['*' => ':string or (:number and :number :int)'], self::EXPECT_FAIL],
             // Simple quantifiers
             [
                 ['name' => 'Jamie', 'lastname' => 'Dutton', 'job' => 'attorney'],
