@@ -46,6 +46,8 @@ class RuleStringTest extends TestCase
             ['json', [], "{'a':12}", self::SHOULD_FAIL],
             ['email', [], "abc@example.com", self::SHOULD_SUCCEED],
             ['email', [], "@example.com", self::SHOULD_FAIL],
+            ['uuid', [], "123", self::SHOULD_FAIL],
+            ['uuid', [], '84d65171-a048-4f14-8a03-86fe688dc6a7', self::SHOULD_SUCCEED],
         ];
     }
 

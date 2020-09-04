@@ -40,6 +40,13 @@ class RuleString extends Rule
         }
     }
 
+    public function uuid(): void
+    {
+        if (!preg_match('/^[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i', $this->value)) {
+            throw new RuleFailed(sprintf("the string is not valid uuid: [%s]", $this->value));
+        }
+    }
+
     public function contains(string $substring): void
     {
         if (mb_strstr($this->value, $substring) === false) {

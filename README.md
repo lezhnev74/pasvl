@@ -25,6 +25,7 @@ Refer to files in `Example` folder.
 
 ### Array Validation
 ```php
+// Define the pattern of the data, define keys and values separately
 $pattern = [
     '*' => [
         'type' => 'book',
@@ -38,6 +39,7 @@ $pattern = [
     ],
 ];
 
+// Provide the data to match against the above pattern.
 $data = [
     [
         'type' => 'book',
@@ -59,8 +61,10 @@ $data = [
 $builder = \PASVL\Validation\ValidatorBuilder::forArray($pattern);
 $validator = $builder->build();
 try {
-    $validator->validate($data); // the array is valid
+    $validator->validate($data);
 } catch (ArrayFailedValidation $e) {
+    // If data cannot be matched against the pattern, then exception is thrown.
+    // It is not always easy to detect why the data failed matching, the exception MAY sometimes give you extra hints.
     echo "failed: " . $e->getMessage() . "\n";
 }
 ```
