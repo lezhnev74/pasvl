@@ -25,6 +25,7 @@ class ArrayValidatorTest extends TestCase
             [['name' => 'Beth Dutton'], ['*' => ':string or :number'], self::EXPECT_PASS],
             [['12' => ''], [':string' => ''], self::EXPECT_FAIL],
             [['12' => ''], [':number :int' => ''], self::EXPECT_PASS],
+            [[-90], [':number :min(-20)' => ':number :min(-90)'], self::EXPECT_PASS],
             // Compound rules
             [['name', 12], ['*' => ':string or :number'], self::EXPECT_PASS],
             [['12', []], ['*' => ':string and :number or :array'], self::EXPECT_PASS],

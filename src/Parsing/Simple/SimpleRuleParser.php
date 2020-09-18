@@ -20,7 +20,7 @@ use PASVL\Parsing\Simple\Tokens\TokenSubRule;
  */
 class SimpleRuleParser extends Parser
 {
-    const PATTERN_NUMBER     = '\d*(?:\.\d*)?';
+    const PATTERN_NUMBER     = '-?\d*(?:\.\d*)?';
     const PATTERN_IDENTIFIER = '[a-zA-Z0-9_\x80-\xff][a-zA-Z0-9_\x80-\xff]*';
 
     const STATE_RULE       = 0;
