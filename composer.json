@@ -1,8 +1,9 @@
 {
   "name": "lezhnev74/pasvl",
-  "description": "PHP Array Structure Validation Library",
+  "description": "Array Validator",
   "keywords": [
     "validation",
+    "validator",
     "array",
     "structure",
     "pattern"
