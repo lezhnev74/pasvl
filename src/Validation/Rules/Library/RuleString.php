@@ -98,7 +98,7 @@ class RuleString extends Rule
 
     public function regexp(string $expr): void
     {
-        if (!preg_match(sprintf("#%s#", $expr), $this->value)) {
+        if (!preg_match($expr, $this->value)) {
             throw new RuleFailed(sprintf("string does not match regular expression %s", $expr));
         }
     }
