@@ -38,6 +38,8 @@ class RuleStringTest extends TestCase
             ['contains', ['bb'], 'ab', self::SHOULD_FAIL],
             ['starts', ['na'], 'name', self::SHOULD_SUCCEED],
             ['starts', ['na'], 'surname', self::SHOULD_FAIL],
+            ['in', ['a','b'], 'a', self::SHOULD_SUCCEED],
+            ['in', ['a','b'], 'c', self::SHOULD_FAIL],
             ['ends', ['e'], 'name', self::SHOULD_SUCCEED],
             ['ends', ['e'], 'job', self::SHOULD_FAIL],
             ['url', [], 'http://example.org', self::SHOULD_SUCCEED],

@@ -16,7 +16,7 @@ class RuleArray extends Rule
 
     public function count(...$args): void
     {
-        if (!count($args)) throw new RuleFailed("Subrule [%s] expects one argument", __METHOD__);
+        if (count($args) !== 1) throw new RuleFailed("Sub-rule [%s] expects one argument", __METHOD__);
         $count = $args[0];
         if (count($this->value) !== $count) {
             throw new RuleFailed(
@@ -27,8 +27,10 @@ class RuleArray extends Rule
 
     public function keys(...$args): void
     {
-        if (array_keys($this->value) !== $args) {
-            throw new RuleFailed(sprintf("array must have keys [%s]", implode(",", $args)));
+        foreach ($args as $expectedKey) {
+            if (!array_key_exists($expectedKey, $this->value)) {
+                throw new RuleFailed(sprintf("array must have keys [%s]", implode(",", $args)));
+            }
         }
     }
 

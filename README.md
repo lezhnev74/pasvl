@@ -149,6 +149,46 @@ To add new custom rules, follow these steps:
   $builder = ValidatorBuilder::forArray($pattern)->withLocator(new MyLocator()); // set your new locator
   $validator = $builder->build();
   ```
+
+## Built-in Rules
+This package comes with a few built-in rules and their corresponding sub-rules (see in folder `src/Validation/Rules/Library`): 
+- `:string` - the value must be string
+  - `:regexp(<string>)` - provide a regular expression without trailing delimiters
+  - `:url`
+  - `:email`
+  - `:uuid`
+  - `:contains(<string>)`
+  - `:starts(<string>)`
+  - `:ends(<string>)`
+  - `:in(<string>,<string>,...)`
+  - `:len(<int>)`
+  - `:max(<int>)`
+  - `:min(<int>)`
+  - `:between(<int>,<int>)`
+- `:number`
+  - `:max(<int>)`
+  - `:min(<int>)`
+  - `:between(<int>, <int>)`
+  - `:int` - the number must be an integer
+  - `:float` - the number must be a float
+  - `:positive`
+  - `:negative`
+  - `:in(<a>,<b>,<c>)` - the number must be within values (type coercion possible)
+  - `:inStrict(<a>,<b>,<c>)` - the number must be within values (type coercion disabled)
+- `:exact(<value>)`  
+- `:bool(<?value>)` - the value must be boolean, if optional argument is given the value must be exactly it  
+- `:object`
+  - `:instance(<fqcn>)`
+  - `:propertyExists(<string>)`
+  - `:methodExists(<string>)`
+- `:array`
+  - `:count(<int>)`
+  - `:keys(<string>,<string>,...)`
+  - `:min(<int>)` - min count
+  - `:max(<int>)` - max count
+  - `:between(<int>, <int>)` - count must be within
+- `:any` - a placeholder, any value will match
+
 ## Hints
 - PHP casts "1" to 1 for array keys:
   ```php

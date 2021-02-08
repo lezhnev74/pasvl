@@ -16,7 +16,7 @@ class RuleObject extends Rule
 
     public function instance(...$args): void
     {
-        if (!count($args)) throw new RuleFailed("Subrule [%s] expects one argument", __METHOD__);
+        if (!count($args)) throw new RuleFailed("Sub-rule [%s] expects one argument", __METHOD__);
         $fqcn = $args[0];
         if (!$this->value instanceof $fqcn) {
             throw new RuleFailed(
