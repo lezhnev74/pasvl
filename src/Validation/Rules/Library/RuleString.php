@@ -98,9 +98,13 @@ class RuleString extends Rule
 
     public function regexp(string $expr): void
     {
-        if (!preg_match($expr, $this->value)) {
-            throw new RuleFailed(sprintf("string does not match regular expression %s", $expr));
-        }
+      if(@preg_match($expr, '') === FALSE) {
+        throw new RuleFailed(sprintf("regexp is not a valid regular expression %s", $expr));
+      }
+
+      if(!preg_match($expr, $this->value)) {
+        throw new RuleFailed(sprintf("string does not match regular expression %s", $expr));
+      }
     }
 
     public function url(): void
