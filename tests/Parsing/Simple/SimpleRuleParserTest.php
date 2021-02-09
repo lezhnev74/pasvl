@@ -54,8 +54,8 @@ class SimpleRuleParserTest extends TestCase
             [":string ?", [TokenRule::make("string", []), TokenQuantifier::make(0, 1)]],
             [":string('\'')", [TokenRule::make("string", ["'"])]],
             [
-                ":string :regexp('\w{1,4}') {1}",
-                [TokenRule::make("string", []), TokenSubRule::make("regexp", ['\w{1,4}']), TokenQuantifier::make(1, 1)],
+                ":string :regexp('/\w{1,4}/') {1}",
+                [TokenRule::make("string", []), TokenSubRule::make("regexp", ['/\w{1,4}/']), TokenQuantifier::make(1, 1)],
             ],
             [":string :min(501)", [TokenRule::make("string", []), TokenSubRule::make("min", [501])]],
             [":string? :min(1)", [TokenNullableRule::make("string", []), TokenSubRule::make("min", [1])]],

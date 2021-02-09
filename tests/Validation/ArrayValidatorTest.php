@@ -20,7 +20,7 @@ class ArrayValidatorTest extends TestCase
             [[], [':exact("name")?' => ':string'], self::EXPECT_PASS],
             [['name' => 'John Dutton'], ['name' => ':string'], self::EXPECT_PASS],
             [['name' => 'Kayce Dutton'], ['name' => ':string :min(20)'], self::EXPECT_FAIL],
-            [['name' => 'Kayce Dutton'], ['name' => ':string :regexp("Jamie")'], self::EXPECT_FAIL],
+            [['name' => 'Kayce Dutton'], ['name' => ':string :regexp("/Jamie/")'], self::EXPECT_FAIL],
             [['name' => 'Jamie', 'lastname' => 'Dutton'], [':string {2}' => ':string'], self::EXPECT_PASS],
             [['name' => 'Beth Dutton'], ['*' => ':string or :number'], self::EXPECT_PASS],
             [['12' => ''], [':string' => ''], self::EXPECT_FAIL],
@@ -52,14 +52,14 @@ class ArrayValidatorTest extends TestCase
                     "lastname" => "",
                 ],
                 [
-                    ":string :regexp('\w{0,4}') {1}" => ":any",
-                    ":string :regexp('\w{0,}') {1}" => ":any",
+                    ":string :regexp('/\w{0,4}/') {1}" => ":any",
+                    ":string :regexp('/\w{0,}/') {1}" => ":any",
                 ],
                 self::EXPECT_PASS,
             ],
             [
                 ["name" => "John"],
-                [':string :regexp("\w{1,4}") {1}' => ":any"],
+                [':string :regexp("/\w{1,4}/") {1}' => ":any"],
                 self::EXPECT_PASS,
             ],
             [
@@ -156,7 +156,7 @@ class ArrayValidatorTest extends TestCase
                     "last_name" => "Walberg",
                 ],
                 [
-                    ":string :regexp('(first|last)_name') *" => ":string",
+                    ":string :regexp('/(first|last)_name/') *" => ":string",
                 ],
                 self::EXPECT_PASS,
             ],
