@@ -1,6 +1,6 @@
 {
   "name": "lezhnev74/pasvl",
-  "description": "Array Validator",
+  "description": "Array Validator (regular expressions for nested array, sort of)",
   "keywords": [
     "validation",
     "validator",
