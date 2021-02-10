@@ -71,7 +71,7 @@ try {
 
 ### Optional String Validation
 ```php
-$pattern = ":string :regexp('^[ab]+$')";
+$pattern = ":string :regexp('#^[ab]+$#')";
 $builder = \PASVL\Validation\ValidatorBuilder::forString($pattern);
 $validator = $builder->build();
 $validator->validate("abab"); // the string is valid
@@ -121,7 +121,7 @@ It looks like this:
   ```
 - as rule with subrules
   ```php
-  $pattern = ["name" => ":string :regexp('\d*')"]; // the value must be a string which contains only digits
+  $pattern = ["name" => ":string :regexp('#\d*#')"]; // the value must be a string which contains only digits
   ```
 - as rule with quantifiers
   ```php
@@ -153,7 +153,7 @@ To add new custom rules, follow these steps:
 ## Built-in Rules
 This package comes with a few built-in rules and their corresponding sub-rules (see in folder `src/Validation/Rules/Library`): 
 - `:string` - the value must be string
-  - `:regexp(<string>)` - provide a regular expression without trailing delimiters
+  - `:regexp(<string>)` - provide a regular expression(the same as for `preg_match()`)
   - `:url`
   - `:email`
   - `:uuid`
@@ -200,7 +200,8 @@ This package comes with a few built-in rules and their corresponding sub-rules (
 ## 🏆 Contributors
 - **[Greg Corrigan](https://github.com/corrigang)**. Greg spotted a problem with nullable values reported as invalid.
 - **Henry Combrinck**. Henry tested the library extensively on real data and found tricky bugs and edge cases. Awesome contribution to make the package valuable to the community.
-- **[@Averor](https://github.com/Averor)**. Found a bug in parenthesis parsing.   
+- **[@Averor](https://github.com/Averor)**. Found a bug in parentheses parsing.
+- **[Julien Gidel](https://github.com/JuGid)**. Improved `regexp` sub-rule.
 
 ## License
 This project is licensed under the terms of the MIT license.
