@@ -196,6 +196,7 @@ This package comes with a few built-in rules and their corresponding sub-rules (
   $pattern_invalid = [":string" => ""];
   $pattern_valid = [":number :int" => ""];
   ```
+ - Technically speaking PASVL is a non-deterministic backtracking parser, and thus it can't always show you what exact key did not match the pattern. That is because, say, a key can match different patterns and there is no way of knowing which one was meant to be correct. In such cases it returns a message like "no matches found at X level".
 
 ## 🏆 Contributors
 - **[Greg Corrigan](https://github.com/corrigang)**. Greg spotted a problem with nullable values reported as invalid.
