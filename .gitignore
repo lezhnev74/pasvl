@@ -7,3 +7,4 @@ composer.phar
 .phpunit*
 composer.lock
 /.php-cs-fixer.cache
+coverage.xml
