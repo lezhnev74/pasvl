@@ -24,7 +24,7 @@ class DataValueMatchedNoPattern extends ArrayFailedValidation
         }
         $reason = $best?->reason?->getMessage();
 
-        $i = $best !== null
+        $i = $best instanceof MatchAttempt
             ? parent::makeWithMessage(
                 $level,
                 sprintf('%s: %s (got %s)', self::pathPostfix($path), $reason, static::serialize($data))

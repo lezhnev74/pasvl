@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Php84\Rector\Foreach_\ForeachToArrayFindKeyRector;
 use Rector\Php84\Rector\Foreach_\ForeachToArrayFindRector;
+use Rector\TypeDeclaration\Rector\ClassMethod\AddMethodCallBasedStrictParamTypeRector;
 use Rector\TypeDeclaration\Rector\ClassMethod\AddParamStringTypeFromSprintfUseRector;
 
 return RectorConfig::configure()
@@ -26,4 +27,8 @@ return RectorConfig::configure()
         // Unsound here: array keys reach these methods as int|string, but the
         // rule infers a bare `string` param type from sprintf() usage.
         AddParamStringTypeFromSprintfUseRector::class,
+        // Unsound here: infers a non-null `int|string` for pushPatternLevel()
+        // from its single non-null caller, but the method body's is_null()
+        // guard implements the "root level" contract - null is legitimate.
+        AddMethodCallBasedStrictParamTypeRector::class,
     ]);

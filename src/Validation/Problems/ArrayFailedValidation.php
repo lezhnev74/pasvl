@@ -10,10 +10,10 @@ class ArrayFailedValidation extends \RuntimeException
     public $level;
 
     /** @var string|null human-readable rule failure, e.g. "the value is not a number" */
-    public $reason = null;
+    public $reason;
 
     /** @var array|null full path incl. the failing scalar key, e.g. ['user', 'age'] */
-    public $path = null;
+    public $path;
 
     public static function make(array $level, string $message = ''): static
     {

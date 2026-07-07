@@ -26,7 +26,7 @@ class DataKeyMatchedNoPatternKey extends ArrayFailedValidation
             $path[] = $dataKey;
         }
         $reason = $best?->reason?->getMessage();
-        $suffix = $best !== null
+        $suffix = $best instanceof MatchAttempt
             ? sprintf(' (closest pattern key [%s]: %s)', $best->patternKey, $reason)
             : '';
 

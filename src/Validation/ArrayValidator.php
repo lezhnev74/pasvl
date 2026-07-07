@@ -21,7 +21,7 @@ use PASVL\Validation\Rules\RuleLocator;
 class ArrayValidator extends Validator
 {
     /** @var string[] the current position(level) in the data array */
-    private $level = [];
+    private array $level = [];
     /** @var Operand[] $tokenizedPatterns */
     private $tokenizedPatterns = [];
 
@@ -241,7 +241,7 @@ class ArrayValidator extends Validator
         return $operand;
     }
 
-    private function pushPatternLevel($patternKey): void
+    private function pushPatternLevel(int|string|null $patternKey): void
     {
         if (is_null($patternKey)) {
             if (!$this->level) {
