@@ -11,11 +11,13 @@ class RuleExact extends Rule
 {
     public function test(...$args): void
     {
-        if (!count($args)) throw new RuleFailed('Exact rule MUST have a value as an argument');
+        if (!count($args)) {
+            throw new RuleFailed('Exact rule MUST have a value as an argument');
+        }
 
         $exact = $args[0];
         if ($exact !== $this->value) {
-            throw new RuleFailed(sprintf("it does not match the exact value: %s", $this->value));
+            throw new RuleFailed(sprintf('it does not match the exact value: %s', $this->value));
         }
     }
 }

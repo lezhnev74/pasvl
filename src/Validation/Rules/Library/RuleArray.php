@@ -11,16 +11,20 @@ class RuleArray extends Rule
 {
     public function test(...$args): void
     {
-        if (!is_array($this->value)) throw new RuleFailed("the value is not an array");
+        if (!is_array($this->value)) {
+            throw new RuleFailed('the value is not an array');
+        }
     }
 
     public function count(...$args): void
     {
-        if (count($args) !== 1) throw new RuleFailed("Sub-rule [%s] expects one argument", __METHOD__);
+        if (count($args) !== 1) {
+            throw new RuleFailed(sprintf('Sub-rule [%s] expects one argument', __METHOD__));
+        }
         $count = $args[0];
         if (count($this->value) !== $count) {
             throw new RuleFailed(
-                sprintf("given array must have length [%s] but it has [%s]", $count, count($this->value))
+                sprintf('given array must have length [%s] but it has [%s]', $count, count($this->value))
             );
         }
     }
@@ -29,7 +33,7 @@ class RuleArray extends Rule
     {
         foreach ($args as $expectedKey) {
             if (!array_key_exists($expectedKey, $this->value)) {
-                throw new RuleFailed(sprintf("array must have keys [%s]", implode(",", $args)));
+                throw new RuleFailed(sprintf('array must have keys [%s]', implode(',', $args)));
             }
         }
     }
@@ -37,14 +41,14 @@ class RuleArray extends Rule
     public function min(int $min): void
     {
         if (count($this->value) < $min) {
-            throw new RuleFailed(sprintf("array must have at least %d items", $min));
+            throw new RuleFailed(sprintf('array must have at least %d items', $min));
         }
     }
 
     public function max(int $max): void
     {
         if (count($this->value) > $max) {
-            throw new RuleFailed(sprintf("array must have no more than %d items", $max));
+            throw new RuleFailed(sprintf('array must have no more than %d items', $max));
         }
     }
 

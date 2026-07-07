@@ -8,8 +8,14 @@
 #   See the comments in the script below for more detailed information.
 #
 
-# Create docker-compose command to run
-COMPOSE="docker-compose -f docker-compose.yml"
+# Create docker compose command to run.
+# Prefer the modern Compose V2 plugin ("docker compose"); fall back to the
+# legacy standalone binary ("docker-compose") if the plugin is unavailable.
+if docker compose version >/dev/null 2>&1; then
+    COMPOSE="docker compose -f docker-compose.yml"
+else
+    COMPOSE="docker-compose -f docker-compose.yml"
+fi
 
 # If we pass any arguments...
 if [ $# -gt 0 ];then

@@ -14,25 +14,20 @@ use PASVL\Parsing\Simple\Tokens\TokenSubRule;
 use PASVL\Validation\Rules\Problems\RuleFailed;
 use PASVL\Validation\Rules\Problems\SubRuleNotRecognized;
 use PASVL\Validation\Rules\Rule;
-use PASVL\Validation\Rules\RuleLocator;
 
 class TokensMatcher
 {
     private const STATE_START  = 0; // reduce all TokenSimpleOperand's to Result
     private const STATE_AND    = 1; // apply all AND operators
     private const STATE_OR     = 2; // apply all OR operators
-    private const STATE_FINISH = 3; // calculate the final Result
+    private const STATE_FINISH = 3;
+    private int $state = self::STATE_START;
 
-    /** @var array of tokens to analyze */
-    private $tokens;
-    private $state = self::STATE_START;
-    /** @var RuleLocator */
-    private $rulesLocator;
-
-    public function __construct(array $tokens, RuleLocator $rulesLocator)
-    {
-        $this->tokens = $tokens;
-        $this->rulesLocator = $rulesLocator;
+    public function __construct(
+        /** @var array of tokens to analyze */
+        private array $tokens,
+        private \PASVL\Validation\Rules\RuleLocator $rulesLocator
+    ) {
     }
 
     /**
@@ -54,8 +49,12 @@ class TokensMatcher
                 $this->state = self::STATE_FINISH;
                 return $this->match($input);
             case self::STATE_FINISH:
-                if (!count($this->tokens)) return Result::passed(); // nothing to do, ex: "" or "*"
-                if (count($this->tokens) !== 1) throw new \RuntimeException('Unmatched count of results');
+                if (!count($this->tokens)) {
+                    return Result::passed();
+                } // nothing to do, ex: "" or "*"
+                if (count($this->tokens) !== 1) {
+                    throw new \RuntimeException('Unmatched count of results');
+                }
                 return $this->tokens[0];
             default:
                 throw new \RuntimeException('Unexpected state');
@@ -68,7 +67,7 @@ class TokensMatcher
     private function reduce($input): void
     {
         foreach ($this->tokens as $i => $token) {
-            switch (get_class($token)) {
+            switch ($token::class) {
                 case TokenSimpleOperand::class:
                     $this->tokens[$i] = $this->matchSimpleToken($token, $input);
                     break;
@@ -95,17 +94,20 @@ class TokensMatcher
         // 3. Quantifier only
         // We are only interested in matching against rule and subrules (if present)
 
-        if ($simpleOperand->tokens()[0] instanceof TokenQuantifier) return Result::passed(); // no rule given? then do nothing (example: "*")
+        if ($simpleOperand->tokens()[0] instanceof TokenQuantifier) {
+            return Result::passed();
+        } // no rule given? then do nothing (example: "*")
 
         // Prepare tokens
         /** @var TokenRule $ruleToken */
         $ruleToken = $simpleOperand->tokens()[0];
-        if (is_null($input) && $ruleToken instanceof TokenNullableRule) return Result::passed();
+        if (is_null($input) && $ruleToken instanceof TokenNullableRule) {
+            return Result::passed();
+        }
 
         // Locate the rule
         /** @var TokenSubRule[] $subRuleTokens */
-        $subRuleTokens = array_filter($simpleOperand->tokens(), function ($t) { return $t instanceof TokenSubRule; });
-        /** @var Rule $rule */
+        $subRuleTokens = array_filter($simpleOperand->tokens(), fn ($t): bool => $t instanceof TokenSubRule);
         $rule = $this->rulesLocator->locate($ruleToken->name());
 
         // Use the rule against the input
@@ -131,9 +133,15 @@ class TokensMatcher
             $this->tokens = array_values($this->tokens);
             $reiterate = false;
             foreach ($this->tokens as $i => $token) {
-                if (!$token instanceof TokenOperator) continue;
-                if (!$token->equals(TokenOperator::make($opType))) continue;
-                if ($i % 2 === 0) throw new \RuntimeException('Only binary operators supported');
+                if (!$token instanceof TokenOperator) {
+                    continue;
+                }
+                if (!$token->equals(TokenOperator::make($opType))) {
+                    continue;
+                }
+                if ($i % 2 === 0) {
+                    throw new \RuntimeException('Only binary operators supported');
+                }
 
                 /** @var Result $lOperand */
                 $lOperand = $this->tokens[$i - 1];
@@ -142,11 +150,7 @@ class TokensMatcher
                 unset($this->tokens[$i - 1]);
                 unset($this->tokens[$i + 1]);
 
-                if ($token->isAnd()) {
-                    $r = $lOperand->isPassed() && $rOperand->isPassed();
-                } else {
-                    $r = $lOperand->isPassed() || $rOperand->isPassed();
-                }
+                $r = $token->isAnd() ? $lOperand->isPassed() && $rOperand->isPassed() : $lOperand->isPassed() || $rOperand->isPassed();
                 $this->tokens[$i] = $r ? Result::passed() : Result::failed(new RuleFailed('Compound rule has been evaluated to FAIL'));
                 $reiterate = true;
                 break;

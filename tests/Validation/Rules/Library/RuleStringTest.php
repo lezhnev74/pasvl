@@ -50,24 +50,28 @@ class RuleStringTest extends TestCase
             ['url', [], '123.com', self::SHOULD_FAIL],
             ['json', [], '{"a":12}', self::SHOULD_SUCCEED],
             ['json', [], "{'a':12}", self::SHOULD_FAIL],
-            ['email', [], "abc@example.com", self::SHOULD_SUCCEED],
-            ['email', [], "@example.com", self::SHOULD_FAIL],
-            ['uuid', [], "123", self::SHOULD_FAIL],
+            ['email', [], 'abc@example.com', self::SHOULD_SUCCEED],
+            ['email', [], '@example.com', self::SHOULD_FAIL],
+            ['uuid', [], '123', self::SHOULD_FAIL],
             ['uuid', [], '84d65171-a048-4f14-8a03-86fe688dc6a7', self::SHOULD_SUCCEED],
         ];
     }
 
     /** @dataProvider data */
-    public function testStringRule(string $method, array $methodArguments, $value, bool $expectedSuccess)
+    public function testStringRule(string $method, array $methodArguments, string|int|array $value, bool $expectedSuccess): void
     {
         $rule = new RuleString();
         $rule->putValue($value);
 
         try {
             call_user_func_array([$rule, $method], $methodArguments);
-            if (!$expectedSuccess) $this->fail('Expected to fail');
-        } catch (RuleFailed $e) {
-            if ($expectedSuccess) $this->fail('Expected to succeed');
+            if (!$expectedSuccess) {
+                $this->fail('Expected to fail');
+            }
+        } catch (RuleFailed) {
+            if ($expectedSuccess) {
+                $this->fail('Expected to succeed');
+            }
         }
 
         $this->addToAssertionCount(1);

@@ -11,7 +11,7 @@ class RuleNotRecognized extends \RuntimeException
 
     public function __construct(string $rule)
     {
-        parent::__construct(sprintf("Rule [%s] not recognized (check the rule locator)", $rule));
+        parent::__construct(sprintf('Rule [%s] not recognized (check the rule locator)', $rule));
         $this->rule = $rule;
     }
 }

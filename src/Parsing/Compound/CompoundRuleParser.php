@@ -20,9 +20,10 @@ use PASVL\Parsing\Simple\SimpleRuleParser;
  */
 class CompoundRuleParser extends Parser
 {
-    const STATE_OPERAND  = 2;
-    const STATE_OPERATOR = 3;
+    public const STATE_OPERAND  = 2;
+    public const STATE_OPERATOR = 3;
 
+    #[\Override]
     public function parse(string $text, int $strategy = self::STRATEGY_STRICT): array
     {
         $tokens = parent::parse($text, $strategy);
@@ -42,18 +43,18 @@ class CompoundRuleParser extends Parser
                     $token = $this->buildOperatorToken();
                     $this->state = self::STATE_OPERAND;
                     return $token;
-                } catch (NotLexeme $e) {
+                } catch (NotLexeme) {
                     // no operator means the operand is unary
                     $this->state = self::STATE_FINISH;
                     return $this->getNextToken();
                 }
             case self::STATE_FINISH:
-                if (strlen($this->remainder())) {
+                if (strlen($this->remainder()) !== 0) {
                     throw new NonEmptyPostfix($this->pos);
                 }
                 throw new Eof();
             default:
-                throw new ParsingFailed("unexpected state reached");
+                throw new ParsingFailed('unexpected state reached');
         }
     }
 
@@ -61,11 +62,11 @@ class CompoundRuleParser extends Parser
     {
         $this->skipSpaces();
         try {
-            [, $lexeme] = $this->expectAny(["or", "and"]);
-        } catch (UnexpectedCharacter $e) {
+            [, $lexeme] = $this->expectAny(['or', 'and']);
+        } catch (UnexpectedCharacter) {
             throw new NotLexeme($this->pos);
         }
-        if ($lexeme == "or") {
+        if ($lexeme == 'or') {
             return TokenOperator::make(TokenOperator::OPERATOR_OR);
         }
         return TokenOperator::make(TokenOperator::OPERATOR_AND);
@@ -77,7 +78,7 @@ class CompoundRuleParser extends Parser
         $this->skipSpaces();
         $nextSymbol = $this->select([
             "\(", // compound start
-            ":",  // simple rule start
+            ':',  // simple rule start
             // quantifiers start:
             '\+',
             '!',
@@ -86,12 +87,12 @@ class CompoundRuleParser extends Parser
             '{',
         ]);
         switch ($nextSymbol) {
-            case ":":
+            case ':':
             case "\+":
-            case "!":
+            case '!':
             case "\*":
             case "\?":
-            case "{":
+            case '{':
                 $p = new SimpleRuleParser();
                 $ruleTokens = $p->parse($this->remainder(), SimpleRuleParser::STRATEGY_ALLOW_POSTFIX);
                 $token = TokenSimpleOperand::make($ruleTokens);

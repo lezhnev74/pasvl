@@ -35,13 +35,17 @@ class StringValidatorTest extends TestCase
     }
 
     /** @dataProvider data */
-    public function testItValidatesStrings($input, string $pattern, bool $isValid): void
+    public function testItValidatesStrings(string|int|null $input, string $pattern, bool $isValid): void
     {
-        if (!$isValid) $this->expectException(StringValidationFailed::class);
+        if (!$isValid) {
+            $this->expectException(StringValidationFailed::class);
+        }
 
         $v = ValidatorBuilder::forString($pattern)->build();
         $v->validate($input);
 
-        if ($isValid) $this->addToAssertionCount(1);
+        if ($isValid) {
+            $this->addToAssertionCount(1);
+        }
     }
 }

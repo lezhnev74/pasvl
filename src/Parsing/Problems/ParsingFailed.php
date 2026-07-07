@@ -6,5 +6,4 @@ namespace PASVL\Parsing\Problems;
 
 class ParsingFailed extends \RuntimeException
 {
-
 }

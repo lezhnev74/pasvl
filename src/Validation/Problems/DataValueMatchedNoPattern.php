@@ -15,11 +15,11 @@ class DataValueMatchedNoPattern extends ArrayFailedValidation
     /** @var mixed data that matched no given pattern */
     public $failedData;
 
-    public static function fromData($data, array $level)
+    public static function fromData($data, array $level): static
     {
         $i = parent::make(
             $level,
-            sprintf("Data value [%s] matched no pattern", static::serialize($data))
+            sprintf('Data value [%s] matched no pattern', static::serialize($data))
         );
         $i->failedData = $data;
         return $i;

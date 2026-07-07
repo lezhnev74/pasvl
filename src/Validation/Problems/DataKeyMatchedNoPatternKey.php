@@ -15,9 +15,10 @@ class DataKeyMatchedNoPatternKey extends ArrayFailedValidation
     /** @var mixed data that matched no given pattern */
     public $failedData;
 
-    public static function fromData($data, array $level)
+    /** @param int|string $data */
+    public static function fromData($data, array $level): static
     {
-        $i = parent::make($level, sprintf("Data key [%s] matched no pattern key", $data));
+        $i = parent::make($level, sprintf('Data key [%s] matched no pattern key', $data));
         $i->failedData = $data;
         return $i;
     }

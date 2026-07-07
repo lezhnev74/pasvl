@@ -11,7 +11,7 @@ class NonEmptyPostfix extends ParsingFailed
 
     public function __construct(int $pos)
     {
-        parent::__construct(sprintf("finished parsing while there are more characters left at %d", $pos));
+        parent::__construct(sprintf('finished parsing while there are more characters left at %d', $pos));
         $this->pos = $pos;
     }
 }

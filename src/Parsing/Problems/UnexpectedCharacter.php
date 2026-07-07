@@ -13,7 +13,7 @@ class UnexpectedCharacter extends ParsingFailed
 
     public function __construct(int $pos, string $characters, string $text)
     {
-        parent::__construct(sprintf("unexpected character at %d: [%s]. Original text: [%s]", $pos, $characters, $text));
+        parent::__construct(sprintf('unexpected character at %d: [%s]. Original text: [%s]', $pos, $characters, $text));
         $this->pos = $pos;
         $this->characters = $characters;
     }

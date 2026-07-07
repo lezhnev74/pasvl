@@ -24,16 +24,20 @@ class RuleBoolTest extends TestCase
     }
 
     /** @dataProvider data */
-    public function testInput(string $method, array $methodArguments, $value, bool $expectedSuccess)
+    public function testInput(string $method, array $methodArguments, bool|string $value, bool $expectedSuccess): void
     {
         $rule = new RuleBool();
         $rule->putValue($value);
 
         try {
             call_user_func_array([$rule, $method], $methodArguments);
-            if (!$expectedSuccess) $this->fail('Expected to fail');
-        } catch (RuleFailed $e) {
-            if ($expectedSuccess) $this->fail('Expected to succeed');
+            if (!$expectedSuccess) {
+                $this->fail('Expected to fail');
+            }
+        } catch (RuleFailed) {
+            if ($expectedSuccess) {
+                $this->fail('Expected to succeed');
+            }
         }
 
         $this->addToAssertionCount(1);

@@ -6,12 +6,8 @@ namespace PASVL\Parsing\Compound\Tokens;
 
 class TokenCompoundOperand implements Operand
 {
-    /** @var array */
-    private $tokens;
-
-    private function __construct(array $tokens)
+    private function __construct(private array $tokens)
     {
-        $this->tokens = $tokens;
     }
 
     public static function make(array $tokens): self
@@ -38,13 +34,6 @@ class TokenCompoundOperand implements Operand
         if (count($this->tokens) !== count($other->tokens)) {
             return false;
         }
-
-        foreach ($this->tokens as $i => $t) {
-            if (!$t->equals($other->tokens[$i])) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->tokens, fn ($t, $i) => $t->equals($other->tokens[$i]));
     }
 }

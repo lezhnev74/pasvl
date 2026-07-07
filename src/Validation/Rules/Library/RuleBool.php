@@ -11,13 +11,15 @@ class RuleBool extends Rule
 {
     public function test(...$args): void
     {
-        if (!is_bool($this->value)) throw new RuleFailed("the value is not a boolean");
+        if (!is_bool($this->value)) {
+            throw new RuleFailed('the value is not a boolean');
+        }
 
         // optional exact match
         if (count($args)) {
             $exact = $args[0];
             if ($exact !== $this->value) {
-                throw new RuleFailed(sprintf("the boolean does not match the exact value: %s", $this->value));
+                throw new RuleFailed(sprintf('the boolean does not match the exact value: %s', $this->value));
             }
         }
     }

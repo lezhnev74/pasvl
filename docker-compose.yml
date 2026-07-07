@@ -1,4 +1,3 @@
-version: "3.7"
 services:
   pasvl:
     container_name: pasvl

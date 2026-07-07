@@ -6,16 +6,15 @@ namespace PASVL\Parsing\Compound\Tokens;
 
 class TokenOperator
 {
-    const OPERATOR_OR  = 0;
-    const OPERATOR_AND = 1;
+    public const OPERATOR_OR  = 0;
+    public const OPERATOR_AND = 1;
 
-    /** @var int */
-    private $operator;
+    private int $operator;
 
     private function __construct(int $operator)
     {
         if (!in_array($operator, [self::OPERATOR_AND, self::OPERATOR_OR])) {
-            throw new \InvalidArgumentException("unexpected operator");
+            throw new \InvalidArgumentException('unexpected operator');
         }
 
         $this->operator = $operator;

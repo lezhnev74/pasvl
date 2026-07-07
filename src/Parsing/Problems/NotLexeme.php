@@ -14,7 +14,7 @@ class NotLexeme extends ParsingFailed
 
     public function __construct(int $pos)
     {
-        parent::__construct(sprintf("unexpected character at %d", $pos));
+        parent::__construct(sprintf('unexpected character at %d', $pos));
         $this->pos = $pos;
     }
 }

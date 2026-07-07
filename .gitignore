@@ -6,3 +6,4 @@ composer.phar
 /storage
 .phpunit*
 composer.lock
+/.php-cs-fixer.cache

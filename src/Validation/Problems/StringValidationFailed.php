@@ -6,5 +6,4 @@ namespace PASVL\Validation\Problems;
 
 class StringValidationFailed extends \RuntimeException
 {
-
 }

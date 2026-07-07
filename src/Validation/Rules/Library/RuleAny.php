@@ -9,5 +9,7 @@ use PASVL\Validation\Rules\Rule;
 // Matches any value
 class RuleAny extends Rule
 {
-    public function test(...$args): void { return; }
+    public function test(...$args): void
+    {
+    }
 }

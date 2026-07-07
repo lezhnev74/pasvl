@@ -12,22 +12,27 @@ use PASVL\Validation\Rules\Problems\RuleFailed;
  */
 class Result
 {
-    /** @var boolean */
-    private $value;
-    /** @var RuleFailed */
-    private $causeException;
-
-    public function __construct(bool $value, ?RuleFailed $causeException)
+    public function __construct(private bool $value, private ?RuleFailed $causeException)
     {
-        $this->value = $value;
-        $this->causeException = $causeException;
     }
 
-    public static function passed(): self { return new self(true, null); }
+    public static function passed(): self
+    {
+        return new self(true, null);
+    }
 
-    public static function failed(RuleFailed $reason): self { return new self(false, $reason); }
+    public static function failed(RuleFailed $reason): self
+    {
+        return new self(false, $reason);
+    }
 
-    public function isPassed(): bool { return $this->value === true; }
+    public function isPassed(): bool
+    {
+        return $this->value;
+    }
 
-    public function reason(): RuleFailed { return $this->causeException; }
+    public function reason(): RuleFailed
+    {
+        return $this->causeException;
+    }
 }

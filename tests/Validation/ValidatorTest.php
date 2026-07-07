@@ -11,8 +11,8 @@ class ValidatorTest extends TestCase
 {
     public function testICanValidateString(): void
     {
-        $data = "Hello world!";
-        $pattern = ":string";
+        $data = 'Hello world!';
+        $pattern = ':string';
 
         $validator = ValidatorBuilder::forString($pattern)->build();
         $validator->validate($data);

@@ -11,11 +11,9 @@ class ValidatorBuilder
     private const MODE_STRING = 0;
     private const MODE_ARRAY  = 1;
 
-    /** @var int */
-    private $mode;
-    /** @var string|array */
-    private $pattern;
-    private $ruleLocator;
+    private ?int $mode = null;
+    private string|array|null $pattern = null;
+    private RuleLocator $ruleLocator;
 
     private function __construct()
     {
@@ -30,14 +28,11 @@ class ValidatorBuilder
 
     public function build(): Validator
     {
-        switch ($this->mode) {
-            case self::MODE_STRING:
-                return new StringValidator($this->ruleLocator, $this->pattern);
-            case self::MODE_ARRAY:
-                return new ArrayValidator($this->ruleLocator, $this->pattern);
-            default:
-                throw new \RuntimeException('Unsupported mode');
-        }
+        return match ($this->mode) {
+            self::MODE_STRING => new StringValidator($this->ruleLocator, $this->pattern),
+            self::MODE_ARRAY => new ArrayValidator($this->ruleLocator, $this->pattern),
+            default => throw new \RuntimeException('Unsupported mode'),
+        };
     }
 
     public static function forString(string $pattern): self

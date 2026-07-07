@@ -20,16 +20,16 @@ use PASVL\Parsing\Simple\Tokens\TokenSubRule;
  */
 class SimpleRuleParser extends Parser
 {
-    const PATTERN_NUMBER     = '-?\d*(?:\.\d*)?';
-    const PATTERN_IDENTIFIER = '[a-zA-Z0-9_\x80-\xff][a-zA-Z0-9_\x80-\xff]*';
+    public const PATTERN_NUMBER     = '-?\d*(?:\.\d*)?';
+    public const PATTERN_IDENTIFIER = '[a-zA-Z0-9_\x80-\xff][a-zA-Z0-9_\x80-\xff]*';
 
-    const STATE_RULE       = 0;
-    const STATE_SUB_RULE   = 1;
-    const STATE_QUANTIFIER = 2;
-    const STATE_FINISH     = 3;
+    public const STATE_RULE       = 0;
+    public const STATE_SUB_RULE   = 1;
+    public const STATE_QUANTIFIER = 2;
+    public const STATE_FINISH     = 3;
 
-    const TOKEN_RULE    = true;
-    const TOKEN_SUBRULE = false;
+    public const TOKEN_RULE    = true;
+    public const TOKEN_SUBRULE = false;
 
     /**
      * Read the next token from the input string
@@ -42,14 +42,14 @@ class SimpleRuleParser extends Parser
                     $token = $this->buildRuleToken(self::TOKEN_RULE);
                     $this->state = self::STATE_SUB_RULE;
                     return $token;
-                } catch (NotLexeme | Eof $e) {
+                } catch (NotLexeme | Eof) {
                     $this->state = self::STATE_SUB_RULE;
                     return $this->getNextToken();
                 }
             case self::STATE_SUB_RULE:
                 try {
                     return $this->buildRuleToken(self::TOKEN_SUBRULE);
-                } catch (NotLexeme | Eof $e) {
+                } catch (NotLexeme | Eof) {
                     $this->state = self::STATE_QUANTIFIER;
                     return $this->getNextToken();
                 }
@@ -58,7 +58,7 @@ class SimpleRuleParser extends Parser
                     $token = $this->buildQuantifierToken();
                     $this->state = self::STATE_FINISH;
                     return $token;
-                } catch (NotLexeme | Eof $e) {
+                } catch (NotLexeme | Eof) {
                     $this->state = self::STATE_FINISH;
                     return $this->getNextToken();
                 }
@@ -68,7 +68,7 @@ class SimpleRuleParser extends Parser
                 }
                 throw new Eof();
             default:
-                throw new ParsingFailed("unexpected state reached");
+                throw new ParsingFailed('unexpected state reached');
         }
     }
 
@@ -83,8 +83,8 @@ class SimpleRuleParser extends Parser
         // 1. read Identifier lexeme
         $this->skipSpaces();
         try {
-            $this->expect(":");
-        } catch (UnexpectedCharacter $e) {
+            $this->expect(':');
+        } catch (UnexpectedCharacter) {
             throw new NotLexeme($this->pos);
         }
 
@@ -92,12 +92,16 @@ class SimpleRuleParser extends Parser
         try {
             $this->expect('\?');
             $tokenType = TokenNullableRule::class;
-        } catch (UnexpectedCharacter $e) {
+        } catch (UnexpectedCharacter) {
             //
         } finally {
             if (($tokenType === TokenNullableRule::class)) {
-                if (!$buildRule) $this->fail();
-                if ($this->strategy & self::STRATEGY_DISABLE_NULLABLE) $this->fail();
+                if (!$buildRule) {
+                    $this->fail();
+                }
+                if (($this->strategy & self::STRATEGY_DISABLE_NULLABLE) !== 0) {
+                    $this->fail();
+                }
             }
         }
 
@@ -105,8 +109,10 @@ class SimpleRuleParser extends Parser
 
         // 2. read optional Arguments lexeme
         try {
-            if ($this->cur() !== "(") return $token;
-        } catch (Eof $e) {
+            if ($this->cur() !== '(') {
+                return $token;
+            }
+        } catch (Eof) {
             return $token;
         }
 
@@ -118,7 +124,7 @@ class SimpleRuleParser extends Parser
         while (
             [$matchedPattern, $lexeme] = $this->expectAny([
             "\)",
-            ",",
+            ',',
             '"',
             "'",
             self::PATTERN_NUMBER,
@@ -126,16 +132,22 @@ class SimpleRuleParser extends Parser
         ) {
             switch ($matchedPattern) {
                 case "\)":
-                    if ($expectArgument) $this->fail();
+                    if ($expectArgument) {
+                        $this->fail();
+                    }
                     return $token;
-                case ",":
-                    if ($expectArgument) $this->fail();
+                case ',':
+                    if ($expectArgument) {
+                        $this->fail();
+                    }
                     $this->skipSpaces();
                     $expectArgument = true;
                     break;
                 case '"':
                 case "'":
-                    if (!$expectArgument) $this->fail();
+                    if (!$expectArgument) {
+                        $this->fail();
+                    }
                     $lexeme = $this->readStringLiteralUntil($matchedPattern);
                     $token = call_user_func(
                         [$tokenType, 'make'],
@@ -145,10 +157,14 @@ class SimpleRuleParser extends Parser
                     $expectArgument = false;
                     break;
                 case self::PATTERN_NUMBER:
-                    if (!$expectArgument) $this->fail();
+                    if (!$expectArgument) {
+                        $this->fail();
+                    }
                     //convert the number to proper type
                     $number = (float)$lexeme;
-                    if ($number == intval($number)) $number = intval($number);
+                    if ($number == intval($number)) {
+                        $number = intval($number);
+                    }
 
                     $token = call_user_func(
                         [$tokenType, 'make'],
@@ -161,6 +177,10 @@ class SimpleRuleParser extends Parser
                     $this->fail();
             }
         }
+
+        // The loop only exits via `return $token` or an exception above; this
+        // guards the theoretically-unreachable fall-through.
+        $this->fail();
     }
 
     private function buildQuantifierToken(): TokenQuantifier
@@ -212,7 +232,7 @@ class SimpleRuleParser extends Parser
                     $this->fail();
             }
             return TokenQuantifier::make($min, $max);
-        } catch (UnexpectedCharacter $e) {
+        } catch (UnexpectedCharacter) {
             throw new NotLexeme($this->pos);
         }
     }

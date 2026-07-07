@@ -20,25 +20,25 @@ class CompoundRuleParserTest extends TestCase
     public function badTestSet(): array
     {
         return [
-            ["()", UnexpectedCharacter::class],
-            ["(())", UnexpectedCharacter::class],
-            ["((()))()", UnexpectedCharacter::class],
-            ["(:string))", NonEmptyPostfix::class],
-            ["((:string)", UnexpectedCharacter::class],
-            ["((string)", UnexpectedCharacter::class],
-            ["not (:string)", UnexpectedCharacter::class],
-            ["(:string) while (:string)", NonEmptyPostfix::class],
-            ["(()", UnexpectedCharacter::class],
+            ['()', UnexpectedCharacter::class],
+            ['(())', UnexpectedCharacter::class],
+            ['((()))()', UnexpectedCharacter::class],
+            ['(:string))', NonEmptyPostfix::class],
+            ['((:string)', UnexpectedCharacter::class],
+            ['((string)', UnexpectedCharacter::class],
+            ['not (:string)', UnexpectedCharacter::class],
+            ['(:string) while (:string)', NonEmptyPostfix::class],
+            ['(()', UnexpectedCharacter::class],
         ];
     }
 
     public function goodTestSet(): array
     {
         return [
-            ["", []],
-            ["*", [TokenSimpleOperand::make([TokenQuantifier::make(0, PHP_INT_MAX)])]],
+            ['', []],
+            ['*', [TokenSimpleOperand::make([TokenQuantifier::make(0, PHP_INT_MAX)])]],
             [
-                ":string",
+                ':string',
                 [TokenSimpleOperand::make([TokenRule::make('string', [])]),],
             ],
             [
@@ -46,7 +46,7 @@ class CompoundRuleParserTest extends TestCase
                 [TokenSimpleOperand::make([TokenRule::make('string', []), TokenSubRule::make('reg', ['abc'])]),],
             ],
             [
-                ":stringA or :stringB",
+                ':stringA or :stringB',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('stringA', [])]),
@@ -57,7 +57,7 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                "(:stringA) or (:stringB)",
+                '(:stringA) or (:stringB)',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('stringA', [])]),
@@ -68,7 +68,7 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                "((:stringA) or (:stringB))",
+                '((:stringA) or (:stringB))',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('stringA', [])]),
@@ -79,7 +79,7 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                ":stringA and (:stringB or :stringC)",
+                ':stringA and (:stringB or :stringC)',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('stringA', [])]),
@@ -94,7 +94,7 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                ":stringA :min(1) or :stringB :max(2)",
+                ':stringA :min(1) or :stringB :max(2)',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('stringA', []), TokenSubRule::make('min', [1])]),
@@ -105,7 +105,7 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                ":stringA or :stringB and :stringC",
+                ':stringA or :stringB and :stringC',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('stringA', [])]),
@@ -118,13 +118,13 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                "(:string)",
+                '(:string)',
                 [
                     TokenSimpleOperand::make([TokenRule::make('string', [])]),
                 ],
             ],
             [
-                "(((:string :max(1))))",
+                '(((:string :max(1))))',
                 [
                     TokenSimpleOperand::make([
                         TokenRule::make('string', []),
@@ -133,7 +133,7 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                "(:stringA) and (:stringB)",
+                '(:stringA) and (:stringB)',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('stringA', [])]),
@@ -143,7 +143,7 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                "(:string) or (:string)",
+                '(:string) or (:string)',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('string', [])]),
@@ -153,7 +153,7 @@ class CompoundRuleParserTest extends TestCase
                 ],
             ],
             [
-                "(((:string) or (:string)))",
+                '(((:string) or (:string)))',
                 [
                     TokenCompoundOperand::make([
                         TokenSimpleOperand::make([TokenRule::make('string', [])]),

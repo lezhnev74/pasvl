@@ -8,13 +8,15 @@ use PASVL\Validation\Rules\RuleLocator;
 
 abstract class Validator
 {
-    /** @var RuleLocator */
-    private $locator;
-
-    public function __construct(RuleLocator $locator) { $this->locator = $locator; }
+    public function __construct(private \PASVL\Validation\Rules\RuleLocator $locator)
+    {
+    }
 
     /** @throws \InvalidArgumentException */
     abstract public function validate($data): void;
 
-    protected function locator(): RuleLocator { return $this->locator; }
+    protected function locator(): RuleLocator
+    {
+        return $this->locator;
+    }
 }

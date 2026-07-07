@@ -11,14 +11,14 @@ use PASVL\Parsing\Problems\UnexpectedCharacter;
 
 abstract class Parser
 {
-    const STRATEGY_ALLOW_POSTFIX    = 0; // parse while text is valid
-    const STRATEGY_STRICT           = 1; // parse all, if invalid symbol found - throw
-    const STRATEGY_DISABLE_NULLABLE = 2; // allow rules to be nullable
+    public const STRATEGY_ALLOW_POSTFIX    = 0; // parse while text is valid
+    public const STRATEGY_STRICT           = 1; // parse all, if invalid symbol found - throw
+    public const STRATEGY_DISABLE_NULLABLE = 2; // allow rules to be nullable
 
-    const STATE_START  = 0;
-    const STATE_FINISH = 1;
+    public const STATE_START  = 0;
+    public const STATE_FINISH = 1;
 
-    const PATTERN_SPACES = '\s+';
+    public const PATTERN_SPACES = '\s+';
 
     /** @var string */
     protected $text;
@@ -32,7 +32,7 @@ abstract class Parser
     /** @return array of tokens */
     public function parse(string $text, int $strategy = self::STRATEGY_STRICT): array
     {
-        if (!strlen($text)) {
+        if ($text === '') {
             return [];
         }
 
@@ -43,13 +43,16 @@ abstract class Parser
 
         $tokens = [];
         try {
-            while (true) {
+            // Loops until getNextToken() throws Eof (caught below).
+            while (true) { // @phpstan-ignore while.alwaysTrue
                 $tokens[] = $this->getNextToken();
             }
-        } catch (Eof $e) {
+        } catch (Eof) {
         } catch (NonEmptyPostfix $e) {
             // Sometimes we want to parse until possible, and return what was parsed
-            if ($this->strategy & self::STRATEGY_STRICT) throw $e;
+            if (($this->strategy & self::STRATEGY_STRICT) !== 0) {
+                throw $e;
+            }
         }
 
         return $tokens;
@@ -70,7 +73,7 @@ abstract class Parser
      *  - returns the matched prefix of the text
      *  - advances the position to the end of the matched prefix
      *
-     * @param string[] $pattern
+     * @param string[] $patterns
      * @throws UnexpectedCharacter
      * @returns array [<string>$matchedPattern, <string|array>$matchedPrefix], if $pattern has groups in it, $lexeme
      *  will be an array of captured groups: pattern: "a(b)", lexeme: [0=>ab, 1=>b]
@@ -78,6 +81,7 @@ abstract class Parser
     protected function expectAny(array $patterns): array
     {
         $matchedPattern = null;
+        $match = [];
         foreach ($patterns as $p) {
             if (preg_match("#^$p#u", $this->remainder(), $match)) {
                 $matchedPattern = $p;
@@ -85,7 +89,9 @@ abstract class Parser
             }
         }
 
-        if (!$matchedPattern) $this->fail();
+        if ($matchedPattern === null) {
+            $this->fail();
+        }
 
         $this->move(mb_strlen($match[0]));
 
@@ -93,6 +99,7 @@ abstract class Parser
         if (count($match) > 1) {
             $lexeme = $match;
         }
+
         return [$matchedPattern, $lexeme];
     }
 
@@ -106,7 +113,9 @@ abstract class Parser
      */
     protected function expect(string $pattern): string
     {
-        if (!preg_match("#^$pattern#u", $this->remainder(), $match)) $this->fail();
+        if (!preg_match("#^$pattern#u", $this->remainder(), $match)) {
+            $this->fail();
+        }
 
         $this->move(mb_strlen($match[0]));
         return $match[0];
@@ -115,13 +124,14 @@ abstract class Parser
     /**
      * return the first matching pattern against the current position,
      * it DOES NOT move the cursor
-     * @var string[] $patterns
+     * @param string[] $patterns
      */
     protected function select(array $patterns): string
     {
-        $matchedPattern = null;
         foreach ($patterns as $p) {
-            if (preg_match("#^$p#u", $this->remainder(), $match)) return $p;
+            if (preg_match("#^$p#u", $this->remainder(), $match)) {
+                return $p;
+            }
         }
 
         $this->fail();
@@ -136,7 +146,10 @@ abstract class Parser
     }
 
     /** Read next $n symbols, if less symbols are available, then return everything from the cur pos to the end of text */
-    protected function nextSymbols(int $n): string { return substr($this->remainder(), 0, $n); }
+    protected function nextSymbols(int $n): string
+    {
+        return substr($this->remainder(), 0, $n);
+    }
 
     protected function move(int $chars = 1): void
     {
@@ -147,7 +160,7 @@ abstract class Parser
     {
         try {
             $this->expect(self::PATTERN_SPACES);
-        } catch (UnexpectedCharacter $e) {
+        } catch (UnexpectedCharacter) {
             // no spaces found? good :)
         }
     }
@@ -157,11 +170,11 @@ abstract class Parser
      */
     protected function readStringLiteralUntil(string $stopSymbol): string
     {
-        $argumentValue = "";
+        $argumentValue = '';
 
         try {
             while ($this->cur() !== $stopSymbol) {
-                if ($this->nextSymbols(2) === "\\" . $stopSymbol) {
+                if ($this->nextSymbols(2) === '\\' . $stopSymbol) {
                     // escape sequence found
                     $this->move(); // \
                     $argumentValue .= $stopSymbol;
@@ -170,7 +183,7 @@ abstract class Parser
                 }
                 $this->move();
             }
-        } catch (Eof $e) {
+        } catch (Eof) {
             // literal should not end until stop symbol found
             $this->fail();
         }
@@ -184,8 +197,11 @@ abstract class Parser
         return substr($this->text, $this->pos);
     }
 
-    /** @throws UnexpectedCharacter */
-    protected function fail(string $message = ""): void
+    /**
+     * @return never
+     * @throws UnexpectedCharacter
+     */
+    protected function fail(string $message = ''): void
     {
         throw new UnexpectedCharacter($this->pos, $this->remainder(), $this->text);
     }

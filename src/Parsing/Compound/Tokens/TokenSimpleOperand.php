@@ -6,10 +6,11 @@ namespace PASVL\Parsing\Compound\Tokens;
 
 class TokenSimpleOperand implements Operand
 {
-    /** @var array of rule tokens */
-    private $tokens;
-
-    private function __construct(array $tokens) { $this->tokens = $tokens; }
+    private function __construct(
+        /** @var array of rule tokens */
+        private array $tokens
+    ) {
+    }
 
     public static function make(array $tokens): self
     {
@@ -25,14 +26,7 @@ class TokenSimpleOperand implements Operand
         if (count($this->tokens) !== count($other->tokens)) {
             return false;
         }
-
-        foreach ($this->tokens as $i => $t) {
-            if (!$t->equals($other->tokens[$i])) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($this->tokens, fn ($t, $i) => $t->equals($other->tokens[$i]));
     }
 
     public function tokens(): array

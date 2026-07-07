@@ -6,15 +6,8 @@ namespace PASVL\Parsing\Simple\Tokens;
 
 class TokenQuantifier
 {
-    /** @var int */
-    private $min;
-    /** @var int */
-    private $max;
-
-    private function __construct(int $min, int $max)
+    private function __construct(private int $min, private int $max)
     {
-        $this->min = $min;
-        $this->max = $max;
     }
 
     public static function make(int $min, int $max): self

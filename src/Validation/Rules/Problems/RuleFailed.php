@@ -6,5 +6,4 @@ namespace PASVL\Validation\Rules\Problems;
 
 class RuleFailed extends \RuntimeException
 {
-
 }

@@ -8,12 +8,12 @@ use PASVL\Validation\Rules\Problems\RuleNotRecognized;
 
 class RuleLocator
 {
-    private $libraryPath = __DIR__ . DIRECTORY_SEPARATOR . "Library";
-
     public function locate(string $ruleName): Rule
     {
         $fqcn = sprintf("\PASVL\Validation\Rules\Library\Rule%s", ucfirst($ruleName));
-        if (!class_exists($fqcn)) throw new RuleNotRecognized($ruleName);
+        if (!class_exists($fqcn)) {
+            throw new RuleNotRecognized($ruleName);
+        }
         return $this->makeRule($fqcn);
     }
 

@@ -12,7 +12,7 @@ class RuleLocatorTest extends TestCase
 {
     public function testICanBuildDefaultRule(): void
     {
-        $rule = "string";
+        $rule = 'string';
         $locator = new RuleLocator();
         $instance = $locator->locate($rule);
         $this->assertInstanceOf(RuleString::class, $instance);

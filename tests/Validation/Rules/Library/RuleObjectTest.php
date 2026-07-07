@@ -23,7 +23,7 @@ class RuleObjectTest extends TestCase
             [
                 'propertyExists',
                 ['x'],
-                new class {
+                new class () {
                     public $x;
                 },
                 self::SHOULD_SUCCEED,
@@ -31,7 +31,7 @@ class RuleObjectTest extends TestCase
             [
                 'propertyExists',
                 ['x'],
-                new class {
+                new class () {
                     public $y;
                 },
                 self::SHOULD_FAIL,
@@ -39,15 +39,17 @@ class RuleObjectTest extends TestCase
             [
                 'methodExists',
                 ['x'],
-                new class {
-                    public function x() { }
+                new class () {
+                    public function x(): void
+                    {
+                    }
                 },
                 self::SHOULD_SUCCEED,
             ],
             [
                 'methodExists',
                 ['x'],
-                new class {
+                new class () {
                 },
                 self::SHOULD_FAIL,
             ],
@@ -55,16 +57,20 @@ class RuleObjectTest extends TestCase
     }
 
     /** @dataProvider data */
-    public function testInput(string $method, array $methodArguments, $value, bool $expectedSuccess)
+    public function testInput(string $method, array $methodArguments, $value, bool $expectedSuccess): void
     {
         $rule = new RuleObject();
         $rule->putValue($value);
 
         try {
             call_user_func_array([$rule, $method], $methodArguments);
-            if (!$expectedSuccess) $this->fail('Expected to fail');
-        } catch (RuleFailed $e) {
-            if ($expectedSuccess) $this->fail('Expected to succeed');
+            if (!$expectedSuccess) {
+                $this->fail('Expected to fail');
+            }
+        } catch (RuleFailed) {
+            if ($expectedSuccess) {
+                $this->fail('Expected to succeed');
+            }
         }
 
         $this->addToAssertionCount(1);

@@ -16,11 +16,11 @@ class TokensMatcherTest extends TestCase
     public function data(): array
     {
         return [
-            ["", "good", true],
-            [":string", "good", true],
-            [":string :min(4)", "good", true],
-            [":string :min(4)", "bad", false],
-            [":string :between(1,2) or :string :between(3,4)", "bad", true],
+            ['', 'good', true],
+            [':string', 'good', true],
+            [':string :min(4)', 'good', true],
+            [':string :min(4)', 'bad', false],
+            [':string :between(1,2) or :string :between(3,4)', 'bad', true],
         ];
     }
 
@@ -42,15 +42,15 @@ class TokensMatcherTest extends TestCase
     {
         $this->expectException(RuleNotRecognized::class);
         $ruleLocator = new RuleLocator();
-        $tokens = (new CompoundRuleParser())->parse(":unknown");
-        (new TokensMatcher($tokens, $ruleLocator))->match("");
+        $tokens = (new CompoundRuleParser())->parse(':unknown');
+        (new TokensMatcher($tokens, $ruleLocator))->match('');
     }
 
     public function testItThrowsExceptionOnUnrecognizedSubRule(): void
     {
         $this->expectException(SubRuleNotRecognized::class);
         $ruleLocator = new RuleLocator();
-        $tokens = (new CompoundRuleParser())->parse(":string :unknown");
-        (new TokensMatcher($tokens, $ruleLocator))->match("");
+        $tokens = (new CompoundRuleParser())->parse(':string :unknown');
+        (new TokensMatcher($tokens, $ruleLocator))->match('');
     }
 }

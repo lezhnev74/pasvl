@@ -6,15 +6,8 @@ namespace PASVL\Parsing\Simple\Tokens;
 
 class TokenRule
 {
-    /** @var string */
-    protected $name;
-    /** @var array */
-    protected $arguments;
-
-    final private function __construct(string $name, array $arguments)
+    final private function __construct(protected string $name, protected array $arguments)
     {
-        $this->name = $name;
-        $this->arguments = $arguments;
     }
 
     public static function make(string $name, array $arguments): self

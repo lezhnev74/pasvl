@@ -6,5 +6,4 @@ namespace PASVL\Parsing\Simple\Tokens;
 
 class TokenSubRule extends TokenRule
 {
-
 }

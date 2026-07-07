@@ -6,5 +6,4 @@ namespace PASVL\Parsing\Problems;
 
 class Eof extends ParsingFailed
 {
-
 }

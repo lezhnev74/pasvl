@@ -12,7 +12,7 @@ class SubRuleNotRecognized extends \RuntimeException
     public function __construct(string $rule, string $subRule)
     {
         parent::__construct(
-            sprintf("SubRule [%s] of rule [%s] not recognized (probably not implemented)", $subRule, $rule)
+            sprintf('SubRule [%s] of rule [%s] not recognized (probably not implemented)', $subRule, $rule)
         );
         $this->rule = $rule;
     }

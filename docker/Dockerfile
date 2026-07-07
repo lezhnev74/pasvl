@@ -1,4 +1,4 @@
-FROM php:7.4
+FROM php:8.3
 
 WORKDIR /var/www
 

@@ -48,30 +48,30 @@ class ArrayValidatorTest extends TestCase
             // Complex quantifiers
             [
                 [
-                    "name" => "",
-                    "lastname" => "",
+                    'name' => '',
+                    'lastname' => '',
                 ],
                 [
-                    ":string :regexp('/\w{0,4}/') {1}" => ":any",
-                    ":string :regexp('/\w{0,}/') {1}" => ":any",
+                    ":string :regexp('/\w{0,4}/') {1}" => ':any',
+                    ":string :regexp('/\w{0,}/') {1}" => ':any',
                 ],
                 self::EXPECT_PASS,
             ],
             [
-                ["name" => "John"],
-                [':string :regexp("/\w{1,4}/") {1}' => ":any"],
+                ['name' => 'John'],
+                [':string :regexp("/\w{1,4}/") {1}' => ':any'],
                 self::EXPECT_PASS,
             ],
             [
                 [
-                    "efgh" => "",
-                    "ab" => "",
-                    "cd" => "",
-                    "a123" => "",
+                    'efgh' => '',
+                    'ab' => '',
+                    'cd' => '',
+                    'a123' => '',
                 ],
                 [
-                    ":string :len(4) {2}" => ":any",
-                    ":string :len(2) {2}" => ":any",
+                    ':string :len(4) {2}' => ':any',
+                    ':string :len(2) {2}' => ':any',
                 ],
                 self::EXPECT_PASS,
             ],
@@ -110,63 +110,63 @@ class ArrayValidatorTest extends TestCase
             [
                 ['name' => 'John',],
                 [
-                    "name" => ":string",
-                    ":exact('last_name')" => ":string",
+                    'name' => ':string',
+                    ":exact('last_name')" => ':string',
                 ],
                 self::EXPECT_FAIL,
             ],
             [
                 [
-                    "name" => "John",
-                    "surname" => "McDawn",
+                    'name' => 'John',
+                    'surname' => 'McDawn',
                 ],
                 [
-                    ":string{1,1}" => ":string",
-                    ":string!" => ":string",
-                ],
-                self::EXPECT_PASS,
-            ],
-            [
-                [
-                    "name" => "John",
-                    "surname" => "McDawn",
-                ],
-                [
-                    "name" => "John",
-                    ":string!" => ":string",
+                    ':string{1,1}' => ':string',
+                    ':string!' => ':string',
                 ],
                 self::EXPECT_PASS,
             ],
             [
                 [
-                    "object" => new \stdClass(),
-                    "nullable_object" => null,
-                    "nullable_array" => null,
+                    'name' => 'John',
+                    'surname' => 'McDawn',
                 ],
                 [
-                    "object" => ":object",
-                    "nullable_object" => ":object? :instance('\stdClass')",
-                    "nullable_array" => ":array? :count(1)",
+                    'name' => 'John',
+                    ':string!' => ':string',
                 ],
                 self::EXPECT_PASS,
             ],
             [
                 [
-                    "first_name" => "Sam",
-                    "last_name" => "Walberg",
+                    'object' => new \stdClass(),
+                    'nullable_object' => null,
+                    'nullable_array' => null,
                 ],
                 [
-                    ":string :regexp('/(first|last)_name/') *" => ":string",
+                    'object' => ':object',
+                    'nullable_object' => ":object? :instance('\stdClass')",
+                    'nullable_array' => ':array? :count(1)',
                 ],
                 self::EXPECT_PASS,
             ],
             [
                 [
-                    0 => "John",
+                    'first_name' => 'Sam',
+                    'last_name' => 'Walberg',
                 ],
                 [
-                    "*" => [
-                        "name" => ":string",
+                    ":string :regexp('/(first|last)_name/') *" => ':string',
+                ],
+                self::EXPECT_PASS,
+            ],
+            [
+                [
+                    0 => 'John',
+                ],
+                [
+                    '*' => [
+                        'name' => ':string',
                     ],
                 ],
                 self::EXPECT_FAIL,
@@ -175,13 +175,17 @@ class ArrayValidatorTest extends TestCase
     }
 
     /** @dataProvider data */
-    public function testItValidatesArrays($input, array $pattern, bool $isValid): void
+    public function testItValidatesArrays(array $input, array $pattern, bool $isValid): void
     {
-        if (!$isValid) $this->expectException(ArrayFailedValidation::class);
+        if (!$isValid) {
+            $this->expectException(ArrayFailedValidation::class);
+        }
 
         $v = ValidatorBuilder::forArray($pattern)->build();
         $v->validate($input);
 
-        if ($isValid) $this->addToAssertionCount(1);
+        if ($isValid) {
+            $this->addToAssertionCount(1);
+        }
     }
 }

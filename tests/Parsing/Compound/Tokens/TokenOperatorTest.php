@@ -23,7 +23,7 @@ class TokenOperatorTest extends TestCase
 
         try {
             $op = TokenOperator::make(999);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
             $this->addToAssertionCount(1);
         }
     }

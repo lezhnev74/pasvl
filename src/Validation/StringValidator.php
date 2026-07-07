@@ -16,16 +16,13 @@ class StringValidator extends Validator
 {
     /** @var Operand */
     private $tokenizedPattern;
-    /** @var string */
-    private $pattern;
 
     public function __construct(RuleLocator $locator, string $pattern)
     {
         parent::__construct($locator);
-        $this->pattern = $pattern;
 
         // Edge case: exact match
-        if (!in_array(trim($pattern)[0], [":", "("])) {
+        if (!in_array(trim($pattern)[0], [':', '('])) {
             $this->tokenizedPattern = TokenSimpleOperand::make([TokenRule::make('exact', [$pattern])]);
         } else {
             $this->tokenizedPattern = (new CompoundRuleParser())->parse($pattern)[0];
