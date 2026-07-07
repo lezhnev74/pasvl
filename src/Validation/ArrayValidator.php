@@ -14,6 +14,7 @@ use PASVL\Validation\Matcher\TokensMatcher;
 use PASVL\Validation\Problems\ArrayFailedValidation;
 use PASVL\Validation\Problems\DataKeyMatchedNoPatternKey;
 use PASVL\Validation\Problems\DataValueMatchedNoPattern;
+use PASVL\Validation\Problems\MatchAttempt;
 use PASVL\Validation\Rules\Problems\RuleFailed;
 use PASVL\Validation\Rules\RuleLocator;
 
@@ -64,43 +65,69 @@ class ArrayValidator extends Validator
     private function validateArrayLevel(array $patternLevel, array $dataLevel): void
     {
         $matchedKeys = []; // [dataKey1 => [patternKey1,...], ...]
+        $attempts = []; // MatchAttempt[] - best-failure candidates for this level
+        $patternOrder = array_flip(array_keys($patternLevel)); // patternKey => declaration index
         foreach (array_keys($dataLevel) as $dataKey) {
             // 1. Find pattern keys that correctly describe the given $dataKey
-            $matchedKeys[$dataKey] = array_filter(
-                array_keys($patternLevel),
-                function (int|string $patternKey) use ($dataKey): bool {
-                    try {
-                        $this->matchValue($patternKey, $dataKey);
-                        return true;
-                    } catch (RuleFailed) {
-                        return false;
-                    }
+            $keyMatches = [];
+            foreach (array_keys($patternLevel) as $patternKey) {
+                try {
+                    $this->matchValue($patternKey, $dataKey);
+                    $keyMatches[] = $patternKey;
+                } catch (RuleFailed $e) {
+                    $attempts[] = new MatchAttempt(
+                        $patternKey,
+                        MatchAttempt::STAGE_KEY_MISMATCH,
+                        $e,
+                        count($this->level),
+                        $patternOrder[$patternKey]
+                    );
                 }
-            );
+            }
+            $matchedKeys[$dataKey] = $keyMatches;
             if (!$matchedKeys[$dataKey]) {
-                throw DataKeyMatchedNoPatternKey::fromData($dataKey, $this->level);
+                throw DataKeyMatchedNoPatternKey::fromData(
+                    $dataKey,
+                    $this->level,
+                    $this->bestAttempt($attempts),
+                    $dataKey
+                );
             }
 
             // 2. Filter out pattern keys which corresponding pattern values do not match the given $dataValue
-            $matchedKeys[$dataKey] = array_filter(
-                $matchedKeys[$dataKey],
-                function ($patternKey) use ($dataKey, $dataLevel, $patternLevel): bool {
-                    try {
-                        if (is_array($dataLevel[$dataKey])) {
-                            $this->pushPatternLevel($patternKey);
-                        }
-                        $this->matchValue($patternLevel[$patternKey], $dataLevel[$dataKey]);
-                        if (is_array($dataLevel[$dataKey])) {
-                            $this->revertOneLevel();
-                        }
-                        return true;
-                    } catch (RuleFailed) {
-                        return false;
+            $valueMatches = [];
+            foreach ($matchedKeys[$dataKey] as $patternKey) {
+                $isArrayValue = is_array($dataLevel[$dataKey]);
+                try {
+                    if ($isArrayValue) {
+                        $this->pushPatternLevel($patternKey);
                     }
+                    $this->matchValue($patternLevel[$patternKey], $dataLevel[$dataKey]);
+                    if ($isArrayValue) {
+                        $this->revertOneLevel();
+                    }
+                    $valueMatches[] = $patternKey;
+                } catch (RuleFailed $e) {
+                    // Only reachable for scalar values (matchValue throws RuleFailed there).
+                    // Nested-array failures throw ArrayFailedValidation and are intentionally
+                    // NOT caught here - they propagate already-enriched.
+                    $attempts[] = new MatchAttempt(
+                        $patternKey,
+                        MatchAttempt::STAGE_VALUE_MISMATCH,
+                        $e,
+                        count($this->level),
+                        $patternOrder[$patternKey]
+                    );
                 }
-            );
+            }
+            $matchedKeys[$dataKey] = $valueMatches;
             if (!$matchedKeys[$dataKey]) {
-                throw DataValueMatchedNoPattern::fromData($dataLevel[$dataKey], $this->level);
+                throw DataValueMatchedNoPattern::fromData(
+                    $dataLevel[$dataKey],
+                    $this->level,
+                    $this->bestAttempt($attempts),
+                    $dataKey
+                );
             }
         }
 
@@ -138,8 +165,46 @@ class ArrayValidator extends Validator
                 $patternKeyIsInCombination || (!$patternKeyWasPerspective && $this->quantityMatch($patternKey, 0));
         }
         if (array_sum($patternKeyFulfillmentMap) !== count($patternKeyFulfillmentMap)) {
-            throw ArrayFailedValidation::make($this->level, 'There are pattern keys that match no data');
+            $unfulfilled = [];
+            foreach ($patternKeyFulfillmentMap as $patternKey => $ok) {
+                if (!$ok) {
+                    $unfulfilled[] = sprintf(
+                        '[%s] (expected %s)',
+                        $patternKey,
+                        $this->quantifierExpectation((string)$patternKey)
+                    );
+                }
+            }
+            throw ArrayFailedValidation::make(
+                $this->level,
+                sprintf('Unfulfilled pattern keys: %s', implode(', ', $unfulfilled))
+            );
         }
+    }
+
+    private function bestAttempt(array $attempts): ?MatchAttempt
+    {
+        if ($attempts === []) {
+            return null; // zero-attempt edge (empty pattern level)
+        }
+        usort($attempts, fn (MatchAttempt $a, MatchAttempt $b): int =>
+            ($b->stage <=> $a->stage)     // VALUE_MISMATCH beats KEY_MISMATCH
+            ?: ($b->depth <=> $a->depth)  // deeper failure wins
+            ?: ($a->order <=> $b->order)); // earliest-declared pattern key
+        return $attempts[0];
+    }
+
+    private function quantifierExpectation(string $patternKey): string
+    {
+        $operand = $this->tokenize($patternKey);
+        foreach ($operand->tokens() as $token) {
+            if ($token instanceof TokenQuantifier) {
+                return $token->min() === $token->max()
+                    ? sprintf('exactly %d', $token->min())
+                    : sprintf('%d..%d', $token->min(), $token->max());
+            }
+        }
+        return 'exactly 1';
     }
 
     private function tokenize($pattern): Operand

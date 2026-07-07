@@ -66,8 +66,13 @@ try {
     $validator->validate($data);
 } catch (ArrayFailedValidation $e) {
     // If data cannot be matched against the pattern, then exception is thrown.
-    // It is not always easy to detect why the data failed matching, the exception MAY sometimes give you extra hints.
+    // The message names the closest pattern key and the reason it failed,
+    // e.g. "at [user->age]: the value is not a number (got 30x)".
     echo "failed: " . $e->getMessage() . "\n";
+
+    // Structured access is also available for programmatic handling:
+    $e->path;   // ['user', 'age'] - full path to the failing element (may be null)
+    $e->reason; // "the value is not a number" - the underlying rule message (may be null)
 }
 ```
 
@@ -198,7 +203,7 @@ This package comes with a few built-in rules and their corresponding sub-rules (
   $pattern_invalid = [":string" => ""];
   $pattern_valid = [":number :int" => ""];
   ```
- - Technically speaking PASVL is a non-deterministic backtracking parser, and thus it can't always show you what exact key did not match the pattern. That is because, say, a key can match different patterns and there is no way of knowing which one was meant to be correct. In such cases it returns a message like "no matches found at X level".
+ - Technically speaking PASVL is a non-deterministic backtracking parser. On failure it reports the near-miss that got furthest - naming the closest pattern key, the failing path, and the rule reason (also available structurally via `$e->path` and `$e->reason`), e.g. `at [user->age]: the value is not a number (got 30x)`. Some ambiguity can still remain: when a key legitimately matches several patterns there is no way of knowing which one was meant to be correct, so the reported reason is a best guess rather than a certainty.
 
 ## 🏆 Contributors
 - **[Greg Corrigan](https://github.com/corrigang)**. Greg spotted a problem with nullable values reported as invalid.
