@@ -11,11 +11,12 @@ use PASVL\Parsing\Simple\Tokens\TokenNullableRule;
 use PASVL\Parsing\Simple\Tokens\TokenQuantifier;
 use PASVL\Parsing\Simple\Tokens\TokenRule;
 use PASVL\Parsing\Simple\Tokens\TokenSubRule;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SimpleRuleParserTest extends TestCase
 {
-    public function badTestSet(): array
+    public static function badTestSet(): array
     {
         return [
             ['exact', NonEmptyPostfix::class],
@@ -44,7 +45,7 @@ class SimpleRuleParserTest extends TestCase
         ];
     }
 
-    public function goodTestSet(): array
+    public static function goodTestSet(): array
     {
         return [
             ['', []],
@@ -104,7 +105,7 @@ class SimpleRuleParserTest extends TestCase
         ];
     }
 
-    /** @dataProvider goodTestSet */
+    #[DataProvider('goodTestSet')]
     public function testParsesInputTextCorrectly(string $text, array $expectedTokens): void
     {
         $parser = new SimpleRuleParser();
@@ -116,7 +117,7 @@ class SimpleRuleParserTest extends TestCase
         }
     }
 
-    /** @dataProvider badTestSet */
+    #[DataProvider('badTestSet')]
     public function testThrowsOnInvalidInputText(string $text, string $expectedExceptionType): void
     {
         $this->expectException($expectedExceptionType);

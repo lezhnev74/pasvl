@@ -6,6 +6,7 @@ namespace PASVL\Tests\Validation;
 
 use PASVL\Validation\Problems\StringValidationFailed;
 use PASVL\Validation\ValidatorBuilder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class StringValidatorTest extends TestCase
@@ -13,7 +14,7 @@ class StringValidatorTest extends TestCase
     private const EXPECT_PASS = true;
     private const EXPECT_FAIL = false;
 
-    public function data(): array
+    public static function data(): array
     {
         return [
             // Unicode
@@ -34,7 +35,7 @@ class StringValidatorTest extends TestCase
         ];
     }
 
-    /** @dataProvider data */
+    #[DataProvider('data')]
     public function testItValidatesStrings(string|int|null $input, string $pattern, bool $isValid): void
     {
         if (!$isValid) {

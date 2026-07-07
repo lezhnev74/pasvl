@@ -9,11 +9,12 @@ use PASVL\Validation\Matcher\TokensMatcher;
 use PASVL\Validation\Rules\Problems\RuleNotRecognized;
 use PASVL\Validation\Rules\Problems\SubRuleNotRecognized;
 use PASVL\Validation\Rules\RuleLocator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TokensMatcherTest extends TestCase
 {
-    public function data(): array
+    public static function data(): array
     {
         return [
             ['', 'good', true],
@@ -24,7 +25,7 @@ class TokensMatcherTest extends TestCase
         ];
     }
 
-    /** @dataProvider data */
+    #[DataProvider('data')]
     public function testItCanMatchTokensAgainstString(string $pattern, string $data, bool $matched): void
     {
         $ruleLocator = new RuleLocator();

@@ -6,6 +6,7 @@ namespace PASVL\Tests\Validation\Rules\Library;
 
 use PASVL\Validation\Rules\Library\RuleString;
 use PASVL\Validation\Rules\Problems\RuleFailed;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class RuleStringTest extends TestCase
@@ -13,7 +14,7 @@ class RuleStringTest extends TestCase
     private const SHOULD_SUCCEED = true;
     private const SHOULD_FAIL    = false;
 
-    public function data(): array
+    public static function data(): array
     {
         return [
             ['test', [], 'hello', self::SHOULD_SUCCEED],
@@ -57,7 +58,7 @@ class RuleStringTest extends TestCase
         ];
     }
 
-    /** @dataProvider data */
+    #[DataProvider('data')]
     public function testStringRule(string $method, array $methodArguments, string|int|array $value, bool $expectedSuccess): void
     {
         $rule = new RuleString();

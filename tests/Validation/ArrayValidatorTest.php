@@ -6,6 +6,7 @@ namespace PASVL\Tests\Validation;
 
 use PASVL\Validation\Problems\ArrayFailedValidation;
 use PASVL\Validation\ValidatorBuilder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ArrayValidatorTest extends TestCase
@@ -13,7 +14,7 @@ class ArrayValidatorTest extends TestCase
     private const EXPECT_PASS = true;
     private const EXPECT_FAIL = false;
 
-    public function data(): array
+    public static function data(): array
     {
         return [
             // Simple rules
@@ -174,7 +175,7 @@ class ArrayValidatorTest extends TestCase
         ];
     }
 
-    /** @dataProvider data */
+    #[DataProvider('data')]
     public function testItValidatesArrays(array $input, array $pattern, bool $isValid): void
     {
         if (!$isValid) {

@@ -6,6 +6,7 @@ namespace PASVL\Tests\Validation\Rules\Library;
 
 use PASVL\Validation\Rules\Library\RuleBool;
 use PASVL\Validation\Rules\Problems\RuleFailed;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class RuleBoolTest extends TestCase
@@ -13,7 +14,7 @@ class RuleBoolTest extends TestCase
     private const SHOULD_SUCCEED = true;
     private const SHOULD_FAIL    = false;
 
-    public function data(): array
+    public static function data(): array
     {
         return [
             ['test', [], true, self::SHOULD_SUCCEED],
@@ -23,7 +24,7 @@ class RuleBoolTest extends TestCase
         ];
     }
 
-    /** @dataProvider data */
+    #[DataProvider('data')]
     public function testInput(string $method, array $methodArguments, bool|string $value, bool $expectedSuccess): void
     {
         $rule = new RuleBool();
