@@ -172,7 +172,8 @@ This package comes with a few built-in rules and their corresponding sub-rules (
   - `:max(<int>)`
   - `:min(<int>)`
   - `:between(<int>,<int>)`
-- `:number`
+- `:number` - accepts numeric strings by default (e.g. `'1'` passes) due to `is_numeric` coercion
+  - `:strict` - reject numeric strings; only real int/float pass (e.g. `'1'` fails)
   - `:max(<int>)`
   - `:min(<int>)`
   - `:between(<int>, <int>)`

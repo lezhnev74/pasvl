@@ -12,7 +12,7 @@ abstract class Validator
     {
     }
 
-    /** @throws \InvalidArgumentException */
+    /** @throws \RuntimeException */
     abstract public function validate($data): void;
 
     protected function locator(): RuleLocator

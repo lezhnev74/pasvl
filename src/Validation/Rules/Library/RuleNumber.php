@@ -31,6 +31,13 @@ class RuleNumber extends Rule
         }
     }
 
+    public function strict(): void
+    {
+        if (!is_int($this->value) && !is_float($this->value)) {
+            throw new RuleFailed('the value must be a number (strict: numeric strings rejected)');
+        }
+    }
+
     public function int(): void
     {
         if (!is_int($this->value)) {

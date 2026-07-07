@@ -23,6 +23,10 @@ class StringValidatorTest extends TestCase
             // edge case: the exact matching
             ['exact', 'exact', self::EXPECT_PASS],
             ['not exact', 'exact', self::EXPECT_FAIL],
+            // edge case: empty / whitespace-only pattern is treated as exact match (no PHP warning)
+            ['', '', self::EXPECT_PASS],
+            ['x', '', self::EXPECT_FAIL],
+            ['  ', '  ', self::EXPECT_PASS],
             [':whatever :exact :value', ":exact(':whatever :exact :value')", self::EXPECT_PASS],
             // pattern based matching
             ['good', ':string', self::EXPECT_PASS],

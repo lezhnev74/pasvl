@@ -21,8 +21,9 @@ class StringValidator extends Validator
     {
         parent::__construct($locator);
 
-        // Edge case: exact match
-        if (!in_array(trim($pattern)[0], [':', '('])) {
+        // Edge case: exact match (also covers empty / whitespace-only patterns)
+        $trimmed = trim($pattern);
+        if ($trimmed === '' || !in_array($trimmed[0], [':', '('])) {
             $this->tokenizedPattern = TokenSimpleOperand::make([TokenRule::make('exact', [$pattern])]);
         } else {
             $this->tokenizedPattern = (new CompoundRuleParser())->parse($pattern)[0];

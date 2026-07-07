@@ -45,6 +45,8 @@ class ArrayValidatorTest extends TestCase
             [[9], ['*' => 9], self::EXPECT_PASS],
             [[3, 4], [':number *' => ':number :int'], self::EXPECT_PASS],
             [['1', '2', '3'], ['*' => ':number'], self::EXPECT_PASS],
+            [[1, 2, 3], ['*' => ':number :strict'], self::EXPECT_PASS],
+            [['1', '2', '3'], ['*' => ':number :strict'], self::EXPECT_FAIL],
             [['1', '1'], [':number??' => '1'], self::EXPECT_FAIL],
             // Complex quantifiers
             [
