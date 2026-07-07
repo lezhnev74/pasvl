@@ -1,9 +1,9 @@
-[![Latest Stable Version](https://poser.pugx.org/lezhnev74/pasvl/v/stable)](https://packagist.org/packages/lezhnev74/pasvl)
+[![Latest Stable Version](https://img.shields.io/packagist/v/lezhnev74/pasvl.svg)](https://packagist.org/packages/lezhnev74/pasvl)
 [![CI](https://github.com/lezhnev74/pasvl/actions/workflows/ci.yml/badge.svg)](https://github.com/lezhnev74/pasvl/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/lezhnev74/pasvl/branch/master/graph/badge.svg)](https://codecov.io/gh/lezhnev74/pasvl)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%205-brightgreen.svg)](https://phpstan.org/)
-[![Total Downloads](https://poser.pugx.org/lezhnev74/pasvl/downloads)](https://packagist.org/packages/lezhnev74/pasvl)
-[![License](https://poser.pugx.org/lezhnev74/pasvl/license)](https://packagist.org/packages/lezhnev74/pasvl)
+[![Total Downloads](https://img.shields.io/packagist/dt/lezhnev74/pasvl.svg)](https://packagist.org/packages/lezhnev74/pasvl)
+[![License](https://img.shields.io/packagist/l/lezhnev74/pasvl.svg)](https://packagist.org/packages/lezhnev74/pasvl)
 
 # PASVL - PHP Array Structure Validation Library
 
